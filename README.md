@@ -8,6 +8,10 @@ second question as much as the first.
 Everything here is measured on one computer, with free and open tools, and every number can be
 reproduced from the files in this repository.
 
+Want the full story, including the four ways the setup nearly fooled us? Read
+[the long version](docs/EXPLAINED.md). Want to know what was actually run and what crashed?
+[The run log](docs/RUN-LOG.md).
+
 ---
 
 ## 1. The problem, in plain words
@@ -197,6 +201,8 @@ and the data split.
 | `scripts/analyse.py` | pass@k, pass^k, and the confidence intervals. |
 | `scripts/make_charts.py` | Draws the figures from the results. |
 | `results/` | Every answer the models gave, and the comparison reports. |
+| `docs/EXPLAINED.md` | The whole study explained from scratch, no background assumed. |
+| `docs/RUN-LOG.md` | What was run, on what machine, and every incident along the way. |
 | `prepared/manifest.json` | Exactly which examples were trained on, and which were dropped and why. |
 
 ---
