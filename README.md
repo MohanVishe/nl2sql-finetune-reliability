@@ -5,6 +5,11 @@
 trains a small AI model on database questions and measures whether the training helps the
 second question as much as the first.
 
+**The answer: it helps both, by the same amount, and so it closes nothing.** Fine-tuning lifted
+capability by 4.4 points and reliability by 4.4 points, leaving the distance between them — the
+flakiness a product actually feels — unchanged, at 22.8%. Training made the model better. It did
+not make it more dependable.
+
 Everything here is measured on one computer, with free and open tools, and every number can be
 reproduced from the files in this repository.
 
@@ -90,9 +95,65 @@ setting matched exactly.
 
 ## 3. Results
 
-> **The F1 evaluation is still running.** This section is filled in when all
-> 496 × 10 answers are scored. The numbers below appear here, with the charts
-> regenerated from the raw files by `scripts/analyse.py` and `scripts/make_charts.py`.
+Both models answered the same 496 questions, ten times each — 9,920 scored answers. Here is the
+whole result in one table:
+
+| | capability (pass@10) | reliability (pass^10) | reliability gap |
+|---|---|---|---|
+| **F0** — before training | 41.7% | 19.0% | 22.8% |
+| **F1** — after training | 46.2% | 23.4% | 22.8% |
+| **Change** (95% confidence) | **+4.4** [+0.6, +8.3] | **+4.4** [+1.0, +7.9] | **+0.0** [−4.6, +4.4] |
+
+![pass@k and pass^k for both models](docs/images/passk-curves.svg)
+
+**Training worked.** The model got better at the task, and not only on the forgiving "at least
+one of ten" measure. Capability and reliability both rose by **4.4 points**, and both intervals
+stay clear of zero, so neither rise is chance.
+
+**Training did not buy dependability.** The distance between the two — the flakiness — did not
+move. In the chart, both of F1's lines sit above F0's, and they stay exactly as far apart as
+before.
+
+That is the answer to the question this project set out to ask. Fine-tuning lifted the whole
+model at once: questions it can now get right, it also gets right consistently; questions it was
+flaky on, it is still flaky on. What training did **not** do was take what the model already
+half-knew and make it steady. If you need a model that answers the same question the same way
+every time, more training on more examples is not, by itself, the lever.
+
+One caution about that headline zero. It is exactly zero, and that is a coincidence: 22 more
+questions became right-at-least-once (58 gained it, 36 lost it), and 22 more became
+right-every-time (49 gained, 27 lost). Two different counts, both landing on 22, and 22 out of
+496 is 4.4355% either way — so the two rises cancel to the fourth decimal. Nothing deeper than
+that is going on.
+
+The honest reading is therefore **"no detectable change"**, not "provably identical". The
+interval runs from −4.6 to +4.4, so a real change of a few points either way would not have
+been detected by a study this size. The interval is the finding; the zero is arithmetic.
+
+### Which questions moved
+
+Averages hide churn, so here is the same result counted one question at a time. **190 of the 496
+questions changed**: 116 got better, 74 got worse.
+
+![What changed, per question](docs/images/what-changed.svg)
+
+| | Questions |
+|---|---|
+| Right all ten times, both models | 67 |
+| Wrong all ten times, both models | 231 |
+| Became right all ten times after training | 49 |
+| Stopped being right all ten times | 27 |
+| Moved, but stayed partly-right in both | 114 |
+| Partly-right and unchanged | 8 |
+
+Those six groups are exclusive and add to 496. The **49 against 27** is where the headline gain
+comes from. The 27 is the part worth dwelling on: training is not a pure addition, and some
+questions the untrained model had nailed every time, the trained model now sometimes gets wrong.
+
+And **231 questions — nearly half — neither model ever got right, in twenty attempts between
+them.** That is not flakiness; that is the ceiling of a 3-billion-number model on this
+benchmark. No amount of steadying would have moved those, which is worth remembering before
+reading any reliability number as a product guarantee.
 
 ---
 
@@ -218,6 +279,10 @@ and the data split.
   official answer did not anticipate.
 - **Repeats are not independent of the machine.** All answers came from the same computer and
   the same server version, recorded alongside the results.
+- **Limited power on the headline.** With 496 questions, the interval on the change in the gap
+  is about ±4.5 points. A real improvement in dependability smaller than that would not have
+  been detected, and this study would have reported the same "no detectable change". The finding
+  is *not detected*, not *not there*.
 
 ---
 

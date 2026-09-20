@@ -227,9 +227,78 @@ implementations agree to the decimal on the control comparison.
 
 ## 7. The result
 
-> **Pending.** F1's evaluation is still running. This section will state the change in
-> capability, the change in reliability, and the change in the gap, each with its interval,
-> followed by what it means and what it does not.
+All three arms, on the 496 questions every arm answered, ten attempts each:
+
+| arm | pass@10 | pass^10 | gap |
+|---|---|---|---|
+| F0 — untrained, through this pipeline | 41.7% | 19.0% | 22.8% |
+| F1 — fine-tuned | 46.2% | 23.4% | 22.8% |
+| published baseline (control, for reference) | 42.3% | 18.8% | 23.6% |
+
+Paired differences, F1 − F0, at k = 10, with 95% intervals from 10,000 bootstrap resamples of
+the 496 questions:
+
+| quantity | change | 95% interval | reading |
+|---|---|---|---|
+| capability (pass@10) | +4.4 | [+0.6, +8.3] | excludes zero — a real rise |
+| reliability (pass^10) | +4.4 | [+1.0, +7.9] | excludes zero — a real rise |
+| **reliability gap** | **+0.0** | **[−4.6, +4.4]** | includes zero — no detectable change |
+
+### The zero is exact, and that is a coincidence
+
+At k equal to the number of attempts collected, the two estimators stop being estimates and
+become counts: pass@10 is just "this question was right at least once", pass^10 is "this
+question was right all ten times". So each difference is a whole number of questions divided
+by 496.
+
+- Right at least once: **58 questions gained it, 36 lost it — net +22.**
+- Right every time: **49 questions gained it, 27 lost it — net +22.**
+
+Both net counts are 22, and 22/496 = 4.4355%. The two rises are therefore identical to the
+fourth decimal, and the gap difference is 0.0000 by construction rather than by any cancelling
+mechanism. It is a nice number and it means nothing on its own.
+
+What carries meaning is the interval around it: **[−4.6, +4.4]**. A study of 496 questions
+cannot see a change in the gap smaller than roughly four and a half points. Had fine-tuning
+shaved three points off the flakiness, this design would have reported the same honest "no
+detectable change". The correct claim is *this study did not detect a change*, and the correct
+follow-up is a larger question set, not a louder adjective.
+
+### What it does mean
+
+The fine-tune moved capability and reliability **together**. That is the substantive finding,
+and it is not the only thing that could have happened. Three outcomes were on the table:
+
+1. Capability rises, reliability lags — training teaches the model new things it has not
+   stabilised. The gap would have **widened**.
+2. Capability and reliability rise together — training lifts the whole distribution. The gap
+   **holds**.
+3. Reliability rises faster — training consolidates what the model half-knew. The gap would
+   have **narrowed**, and fine-tuning would be a dependability lever.
+
+The data say (2), and it is worth being clear about why (3) is the one that got ruled out in
+spirit: (3) is the outcome a product team would be buying when they commission a fine-tune to
+"make the model more consistent". On this task, at this size, with this recipe, there is no
+evidence they would get it. They would get a model that is better across the board and exactly
+as flaky, question for question, as the one they started with.
+
+The per-question counts say the same thing from another angle. 190 of 496 questions moved at
+all; 116 improved and 74 worsened. Fine-tuning is not a monotone improvement applied to a model,
+it is a **redistribution** with a positive mean — 27 questions that the base model got right
+all ten times stopped being dependable after training. A team shipping F1 over F0 gains on
+balance and still regresses 74 questions, which no single headline number would have told them.
+
+### What it does not mean
+
+- **Not "fine-tuning never helps reliability".** One task, one 3-billion-parameter model, one
+  QLoRA recipe, one training run, one seed. Any of those could change the answer, and this
+  study is powered to speak about none of them.
+- **Not "the gap is constant".** It was not detectably changed *by this intervention*. A
+  different intervention — decoding changes, self-consistency, verification, retrieval — is
+  untested here and attacks the problem from a different direction.
+- **Not a ceiling claim.** 231 of the 496 questions were answered wrong by both models on all
+  twenty attempts between them. Those are not flaky, they are out of reach, and they hold both
+  headline numbers down in a way that has nothing to do with reliability.
 
 ---
 

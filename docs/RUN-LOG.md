@@ -82,11 +82,19 @@ single turn. Two questions are excluded from scoring because their official quer
 | Arm | Attempts | Result |
 |---|---|---|
 | F0 (`p3-f0-base`) | 4,980 | Complete. pass@10 41.7%, pass^10 19.0%, gap 22.8% |
-| F1 (`p3-f1-qlora`) | 4,980 | In progress |
+| F1 (`p3-f1-qlora`) | 4,980 | Complete. pass@10 46.2%, pass^10 23.4%, gap 22.8% |
 
 F0 against the published baseline (`results/f0-vs-c.txt`): pass@10 −0.6 [−2.6, +1.6],
 pass^10 +0.2 [−1.6, +2.2], gap −0.8 [−3.6, +2.0]. All intervals include zero, so neither this
 pipeline nor the Ollama update (0.34.1 → 0.34.2 mid-study) moves the numbers.
+
+F1 ran from 2026-09-19 21:49 IST to 2026-09-20 19:28 IST, exit code 0, across four stops (three
+bugchecks and one planned restart, below). Both result files were checked after the final
+attempt: 4,980 rows each, 4,980 unique `(arm, question, attempt)` keys, no duplicates, no
+unparsable lines, and 20 `gold_failed` rows each — the two excluded questions × ten attempts.
+
+F1 against F0 (`results/summary.json`): pass@10 +4.4 [+0.6, +8.3], pass^10 +4.4 [+1.0, +7.9],
+gap +0.0 [−4.6, +4.4].
 
 ## Incidents
 
@@ -98,6 +106,16 @@ pipeline nor the Ollama update (0.34.1 → 0.34.2 mid-study) moves the numbers.
   starting before this project — a machine problem, not a study problem. Each stop cost nothing:
   the harness resumes from its completed attempts, and no partial line was ever written. The
   files were checked for duplicate `(question, attempt)` pairs after every resume: none.
+- **Planned restart mid-run** (2026-09-20 18:23 IST). The evaluation was stopped deliberately
+  at 4,198 of 4,980 attempts so the machine could be rebooted. Order matters: the watchdog was
+  stopped first, or it would have relaunched the run within the minute, and only then the worker
+  process tree. The file was checked while idle — 4,198 rows, no duplicate keys, last line
+  complete. It resumed 30 minutes later at question 1,171 attempt 7, the attempt immediately
+  after the last completed one, and ran the remaining 782 attempts at 0.36 attempts/second.
+  Ollama had to be restarted after the reboot and came back on the same 0.34.2; had it
+  self-updated in the meantime, `evaluate.py` would have refused to resume the arm rather than
+  mixing two server versions in one result file.
+
 - **GPU contention.** An unrelated 7B model was served on the same 8 GB card for a few minutes;
   Ollama evicted and reloaded a model per request, and throughput fell from 0.35 to 0.15
   attempts per second. The evaluation was paused and resumed once the card was free. Outputs are
