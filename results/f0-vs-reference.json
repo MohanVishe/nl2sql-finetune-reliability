@@ -1,0 +1,20 @@
+{
+  "candidate": "..\\gguf\\f0-base.Q4_K_M.gguf",
+  "reference": "C:\\Users\\mohan\\.ollama\\models\\blobs\\sha256-4a188102020e9c9530b687fd6400f775c45e90a0d7baafe65bd0a36963fbb7ba",
+  "tensors": {
+    "reference": 434,
+    "candidate": 434,
+    "common": 434,
+    "missing_in_candidate": [],
+    "extra_in_candidate": [],
+    "shape_or_type_mismatch": [],
+    "byte_identical": 434,
+    "bytes_differ": [],
+    "reference_types": {
+      "F32": 181,
+      "Q4_K": 216,
+      "Q6_K": 37
+    }
+  },
+  "metadata_differences": {}
+}
