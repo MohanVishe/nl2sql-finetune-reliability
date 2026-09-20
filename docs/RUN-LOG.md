@@ -96,6 +96,11 @@ unparsable lines, and 20 `gold_failed` rows each — the two excluded questions 
 F1 against F0 (`results/summary.json`): pass@10 +4.4 [+0.6, +8.3], pass^10 +4.4 [+1.0, +7.9],
 gap +0.0 [−4.6, +4.4].
 
+F1 against the published prompted 7B (`results/summary-f1-vs-7b.json`), P1 arm A, read from
+`local-7b-single.jsonl` and never re-run: pass@10 −3.6 [−7.7, +0.6], pass^10 −12.7
+[−16.7, −8.5], gap +9.1 [+4.4, +13.7]. This comparison spans Ollama 0.34.1 (the 7B) and
+0.34.2 (F1); F0 is the control that licenses it.
+
 ## Incidents
 
 - **Ollama updated itself** from 0.34.1 to 0.34.2 between the published baseline and this study.

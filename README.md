@@ -10,6 +10,11 @@ capability by 4.4 points and reliability by 4.4 points, leaving the distance bet
 flakiness a product actually feels — unchanged, at 22.8%. Training made the model better. It did
 not make it more dependable.
 
+**And the finding with a price tag on it:** the fine-tuned small model matches a model twice its
+size on the usual benchmark score — and is **12.7 points worse** at giving the same answer every
+time. Swap them on the strength of the benchmark, as a normal evaluation would invite you to,
+and you ship something markedly flakier with nothing in the numbers to warn you.
+
 Everything here is measured on one computer, with free and open tools, and every number can be
 reproduced from the files in this repository.
 
@@ -129,6 +134,37 @@ that is going on.
 The honest reading is therefore **"no detectable change"**, not "provably identical". The
 interval runs from −4.6 to +4.4, so a real change of a few points either way would not have
 been detected by a study this size. The interval is the finding; the zero is arithmetic.
+
+### The cheaper model that looks equal and is not
+
+The other question this project set out to answer: a 7-billion-number model costs roughly twice
+as much to serve as a 3-billion one. **Can a fine-tuned 3B replace a prompted 7B?** The earlier
+project measured exactly that 7B on exactly these questions, so the comparison is available
+without running anything new.
+
+| | capability (pass@10) | reliability (pass^10) | gap |
+|---|---|---|---|
+| Prompted 7B (from the earlier project) | 49.8% | 36.1% | 13.7% |
+| **Fine-tuned 3B** (F1) | 46.2% | 23.4% | 22.8% |
+| Difference (95% confidence) | −3.6 [−7.7, **+0.6**] | −12.7 [−16.7, −8.5] | +9.1 [+4.4, +13.7] |
+
+**On the benchmark score, they are a tie.** The capability interval includes zero: this study
+cannot tell the fine-tuned 3B apart from the 7B twice its size on pass@10. That is the result a
+team hoping to halve its serving bill is looking for, and on its own it would justify the swap.
+
+**On dependability they are not remotely equal.** The 3B is **12.7 points worse** on pass^10,
+and that interval is nowhere near zero. Counted per question: **92 questions the 7B answered
+correctly all ten times, the fine-tuned 3B does not** — against 29 going the other way.
+
+So the swap that looks free on a leaderboard costs a fifth of the model's repeatable answers. A
+team that benchmarked the usual way would have seen the tie, shipped the small model, saved the
+money, and shipped something substantially flakier without a number anywhere in the process
+telling them so. **That, not the headline zero, is the practical finding of this project.**
+
+> One honesty note on this table: the 7B's answers came from the earlier project on Ollama
+> 0.34.1, and F1's on 0.34.2. That is precisely why F0 exists — it establishes that the version
+> change and this pipeline move the numbers by less than chance (every interval includes zero,
+> §2 above). Without F0 this comparison would not be safe to make.
 
 ### Which questions moved
 

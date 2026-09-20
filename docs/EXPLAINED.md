@@ -264,6 +264,58 @@ shaved three points off the flakiness, this design would have reported the same 
 detectable change". The correct claim is *this study did not detect a change*, and the correct
 follow-up is a larger question set, not a louder adjective.
 
+### The prediction that was written down first, and how it did
+
+Two hypotheses were registered before F1 was trained, each taken from published work, along with
+the rule that would decide between them:
+
+- **H-coverage** — fine-tuning expands what the model can solve faster than it makes it
+  consistent. pass@10 rises more than pass^10, **the gap widens**.
+- **H-diversity** — fine-tuning narrows output variety, so the model agrees with itself more.
+  pass^10 rises more than pass@10, **the gap narrows**.
+
+**The stated leaning was H-diversity**, on the reasoning that the 3B's unusually wide 23.6-point
+gap in the earlier project looked like inconsistency rather than inability — the kind of spread
+fine-tuning is documented to collapse. The decision rule, fixed in advance: a 95% interval on
+Δgap entirely below zero supports H-diversity, entirely above supports H-coverage, and an
+interval straddling zero is reported as "no detectable change".
+
+**The interval straddles zero. Neither hypothesis was supported, including the leaning.** Both
+mechanisms are real and documented; on this task, at this size, they appear to have cancelled,
+or neither was strong enough to see. That is written here because it was promised in advance,
+and because a prediction that only gets reported when it lands is not a prediction.
+
+A second prediction was registered too: that the fine-tuned 3B would **pass** the prompted 7B on
+pass@10. It drew level instead — the interval includes zero — which is the subject of the next
+section.
+
+### The crossover: the same score, a fifth of the dependability
+
+The other question the study was built to answer is a purchasing question. A 7B model costs
+about twice as much to serve as a 3B. The earlier project measured a prompted 7B on these exact
+questions, so the comparison needs no new compute — that arm was never re-run, only read.
+
+| | pass@10 | pass^10 | gap |
+|---|---|---|---|
+| prompted 7B | 49.8% | 36.1% | 13.7% |
+| fine-tuned 3B | 46.2% | 23.4% | 22.8% |
+| difference, paired | −3.6 [−7.7, **+0.6**] | −12.7 [−16.7, −8.5] | +9.1 [+4.4, +13.7] |
+
+On capability the two are **not distinguishable by this study**. On reliability the 3B is worse
+by 12.7 points, with an interval nowhere near zero, and per question the asymmetry is stark:
+**92 questions the 7B got right all ten times, the fine-tuned 3B does not**, against 29 in the
+other direction.
+
+This is the most directly actionable thing here. A team evaluating the swap the usual way — one
+attempt per question, a single benchmark score — sees a tie, takes the cheaper model, and ships
+a system that fails to reproduce itself on a fifth more of its workload. Nothing in the standard
+evaluation would have shown them that, because the standard evaluation asks each question once.
+
+The comparison does cross a serving-version boundary: the 7B's answers were produced on Ollama
+0.34.1 and F1's on 0.34.2. F0 is what makes it defensible — the same untrained model through
+this pipeline on the new version reproduces the old published numbers to within chance on all
+three quantities. Without that control this table would be an artifact waiting to be found.
+
 ### What it does mean
 
 The fine-tune moved capability and reliability **together**. That is the substantive finding,
