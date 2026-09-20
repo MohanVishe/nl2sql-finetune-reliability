@@ -1,0 +1,120 @@
+{
+  "questions": 496,
+  "attempts_per_question": 10,
+  "resamples": 10000,
+  "seed": 0,
+  "arms": {
+    "baseline": "results\\p3-f0-base.jsonl",
+    "treatment": "results\\p3-f1-qlora.jsonl",
+    "reference": "C:\\Workspace\\projects\\gh-work\\nl2sql-reliability\\results\\final\\local-7b-single.jsonl"
+  },
+  "rates": {
+    "baseline": {
+      "correct": 0.2967741935483871,
+      "crashed": 0.37983870967741934,
+      "silent_wrong": 0.3233870967741936
+    },
+    "treatment": {
+      "correct": 0.3493951612903226,
+      "crashed": 0.1820564516129032,
+      "silent_wrong": 0.4685483870967742
+    },
+    "reference": {
+      "correct": 0.42943548387096775,
+      "crashed": 0.16129032258064516,
+      "silent_wrong": 0.4092741935483871
+    }
+  },
+  "consistency": {
+    "baseline": {
+      "never": 289,
+      "flaky": 113,
+      "always": 94,
+      "spread": {
+        "0": 289,
+        "1": 23,
+        "2": 15,
+        "3": 11,
+        "4": 9,
+        "5": 6,
+        "6": 11,
+        "7": 8,
+        "8": 12,
+        "9": 18,
+        "10": 94
+      }
+    },
+    "treatment": {
+      "never": 267,
+      "flaky": 113,
+      "always": 116,
+      "spread": {
+        "0": 267,
+        "1": 20,
+        "2": 7,
+        "3": 12,
+        "4": 12,
+        "5": 15,
+        "6": 5,
+        "7": 6,
+        "8": 16,
+        "9": 20,
+        "10": 116
+      }
+    },
+    "reference": {
+      "never": 249,
+      "flaky": 68,
+      "always": 179,
+      "spread": {
+        "0": 249,
+        "1": 10,
+        "2": 9,
+        "3": 7,
+        "4": 5,
+        "5": 7,
+        "6": 3,
+        "7": 9,
+        "8": 7,
+        "9": 11,
+        "10": 179
+      }
+    }
+  },
+  "differences": {
+    "treatment_minus_baseline": {
+      "correct": {
+        "delta": 0.05262096774193549,
+        "ci_low": 0.021774193548387097,
+        "ci_high": 0.08326612903225808
+      },
+      "crashed": {
+        "delta": -0.19778225806451613,
+        "ci_low": -0.23225806451612904,
+        "ci_high": -0.16451612903225804
+      },
+      "silent_wrong": {
+        "delta": 0.14516129032258066,
+        "ci_low": 0.11169354838709677,
+        "ci_high": 0.18044354838709678
+      }
+    },
+    "treatment_minus_reference": {
+      "correct": {
+        "delta": -0.08004032258064515,
+        "ci_low": -0.1155241935483871,
+        "ci_high": -0.04334677419354839
+      },
+      "crashed": {
+        "delta": 0.020766129032258066,
+        "ci_low": -0.01008064516129032,
+        "ci_high": 0.051814516129032255
+      },
+      "silent_wrong": {
+        "delta": 0.059274193548387095,
+        "ci_low": 0.018750000000000003,
+        "ci_high": 0.09818548387096773
+      }
+    }
+  }
+}

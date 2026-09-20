@@ -20,6 +20,7 @@ GOOD = "#3fa06a"
 BAD = "#d1544f"
 INK = "#8b93a1"       # readable on light and dark
 GRID = "#8b93a180"
+NEWLINE = chr(10)
 FONT = ("font-family=\"-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif\"")
 
 
@@ -193,11 +194,88 @@ def training_chart(training: dict, out: Path) -> None:
                           encoding="utf-8")
 
 
+def _stacked(rows: list[tuple[str, list[tuple[str, float, str]]]], *, title: str,
+             note: str, unit: str, out: Path) -> None:
+    """One horizontal 100%-wide bar per arm, split into labelled segments."""
+    w = 760
+    left, right, top, row_h = 132, 26, 52, 54
+    h = top + len(rows) * row_h + 58
+    bar_w = w - left - right
+    total = sum(value for _, value, _ in rows[0][1])
+    parts = [text(20, 26, title, size=13, weight="700")]
+    for index, (name, segments) in enumerate(rows):
+        y = top + index * row_h
+        parts.append(text(left - 12, y + 20, name, size=12, anchor="end", weight="600"))
+        x = left
+        for _label, value, colour in segments:
+            seg = value / total * bar_w
+            parts.append(f'<rect x="{x:.1f}" y="{y}" width="{max(seg, 0.6):.1f}" height="28" '
+                         f'fill="{colour}" fill-opacity="0.85" />')
+            if seg > 46:
+                shown = f"{value:.0f}" if unit == "count" else f"{value * 100:.0f}%"
+                parts.append(text(x + seg / 2, y + 19, shown, size=12, fill="#ffffff",
+                                  anchor="middle", weight="700"))
+            x += seg
+    legend_y = top + len(rows) * row_h + 14
+    x = left
+    for label, _, colour in rows[0][1]:
+        parts.append(f'<rect x="{x}" y="{legend_y - 9}" width="11" height="11" rx="2" '
+                     f'fill="{colour}" fill-opacity="0.85" />')
+        parts.append(text(x + 17, legend_y, label, size=12))
+        x += 20 + len(label) * 7.0
+    parts.append(text(20, h - 12, note, size=12))
+    return out.write_text(svg(w, h, NEWLINE.join(parts), title), encoding="utf-8")
+
+
+def failure_modes_chart(report: dict, out: Path) -> None:
+    """Every attempt, split by how it failed -- loudly or silently."""
+    names = {"baseline": "F0  untrained", "treatment": "F1  fine-tuned",
+             "reference": "7B  prompted"}
+    rows = []
+    for arm, label in names.items():
+        r = report["rates"].get(arm)
+        if r is None:
+            continue
+        rows.append((label, [
+            ("right", r["correct"], GOOD),
+            ("crashed (visible failure)", r["crashed"], TREAT),
+            ("ran, wrong rows (silent failure)", r["silent_wrong"], BAD),
+        ]))
+    _stacked(rows, title=f"How each attempt ended "
+                         f"({report['questions']} questions x "
+                         f"{report['attempts_per_question']} attempts)",
+             note="Fine-tuning removed 19.8 points of crashes and turned only 5.3 of them "
+                  "into right answers.",
+             unit="rate", out=out)
+
+
+def consistency_chart(report: dict, out: Path) -> None:
+    """Where the flakiness lives: questions by how many attempts succeeded."""
+    names = {"baseline": "F0  untrained", "treatment": "F1  fine-tuned",
+             "reference": "7B  prompted"}
+    rows = []
+    for arm, label in names.items():
+        c = report["consistency"].get(arm)
+        if c is None:
+            continue
+        rows.append((label, [
+            ("never right", c["never"], INK),
+            ("flaky (right some of the time)", c["flaky"], TREAT),
+            ("right every time", c["always"], GOOD),
+        ]))
+    _stacked(rows, title="Questions by how many of the ten attempts were right",
+             note="The flaky middle is identical before and after fine-tuning: 113 questions. "
+                  "The 7B's is 68.",
+             unit="count", out=out)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--summary", type=Path, default=Path("results/summary.json"))
     parser.add_argument("--training", type=Path,
                         default=Path("results/f1-training/training.json"))
+    parser.add_argument("--failure-modes", type=Path,
+                        default=Path("results/failure-modes.json"))
     parser.add_argument("--out", type=Path, default=Path("docs/images"))
     args = parser.parse_args()
 
@@ -212,6 +290,11 @@ def main() -> int:
         curves_chart(summary, args.out / "passk-curves.svg")
         moved_chart(summary, args.out / "what-changed.svg")
         written += ["passk-curves.svg", "what-changed.svg"]
+    if args.failure_modes.exists():
+        report = json.loads(args.failure_modes.read_text(encoding="utf-8"))
+        failure_modes_chart(report, args.out / "failure-modes.svg")
+        consistency_chart(report, args.out / "consistency.svg")
+        written += ["failure-modes.svg", "consistency.svg"]
     print(f"wrote {', '.join(written)} to {args.out}")
     return 0
 

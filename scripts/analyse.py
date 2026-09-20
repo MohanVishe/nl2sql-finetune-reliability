@@ -25,12 +25,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import random
 import statistics
 from collections import defaultdict
 from pathlib import Path
 
-RESAMPLES = 10_000
+from nl2sql_finetune.stats import RESAMPLES, bootstrap
 
 
 def read(path: Path, *, strict: bool) -> dict[int, list[bool]]:
@@ -58,19 +57,6 @@ def suite(arm: dict[int, list[bool]], questions: list[int], depth: int, k: int,
     return statistics.fmean(
         estimator(depth, sum(arm[q][:depth]), k) for q in questions
     )
-
-
-def bootstrap(per_question: dict[int, float], questions: list[int], *, seed: int = 0,
-              resamples: int = RESAMPLES) -> tuple[float, float]:
-    """Percentile interval for the mean of a paired per-question difference."""
-    rng = random.Random(seed)
-    n = len(questions)
-    values = [per_question[q] for q in questions]
-    means = []
-    for _ in range(resamples):
-        means.append(statistics.fmean(values[rng.randrange(n)] for _ in range(n)))
-    means.sort()
-    return means[int(0.025 * resamples)], means[int(0.975 * resamples) - 1]
 
 
 def main() -> int:
