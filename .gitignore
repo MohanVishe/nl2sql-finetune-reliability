@@ -16,3 +16,6 @@ Modelfile
 # Anything accidentally placed inside the repo
 data/
 models/
+
+# Run logs (progress output; results live in the .jsonl files)
+results/*.log
