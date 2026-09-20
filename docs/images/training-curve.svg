@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" width="720" height="400" role="img" aria-label="Training and validation loss">
+<title>Training and validation loss</title>
+<line x1="62.0" y1="348.0" x2="540.0" y2="348.0" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="352.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="end" font-weight="normal">0.08</text>
+<line x1="62.0" y1="272.5" x2="540.0" y2="272.5" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="276.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="end" font-weight="normal">0.11</text>
+<line x1="62.0" y1="197.0" x2="540.0" y2="197.0" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="201.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="end" font-weight="normal">0.15</text>
+<line x1="62.0" y1="121.5" x2="540.0" y2="121.5" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="125.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="end" font-weight="normal">0.18</text>
+<line x1="62.0" y1="46.0" x2="540.0" y2="46.0" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="50.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="end" font-weight="normal">0.22</text>
+<text x="62.0" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">0</text>
+<text x="127.3" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">100</text>
+<text x="192.6" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">200</text>
+<text x="257.9" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">300</text>
+<text x="323.2" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">400</text>
+<text x="388.5" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">500</text>
+<text x="453.8" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">600</text>
+<text x="519.1" y="370.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="middle" font-weight="normal">700</text>
+<text x="301.0" y="390.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#8b93a1" text-anchor="middle" font-weight="normal">training step</text>
+<text x="10.0" y="20.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">loss (lower is better)</text>
+<polyline points="68.5,63.9 75.1,111.4 81.6,116.2 88.1,135.7 94.7,141.2 101.2,172.0 107.7,166.0 114.2,207.7 120.8,205.6 127.3,186.4 133.8,192.6 140.4,232.5 146.9,150.9 153.4,214.4 160.0,219.2 166.5,235.7 173.0,260.3 179.5,212.4 186.1,200.8 192.6,198.6 199.1,247.2 205.7,234.5 212.2,245.4 218.7,236.2 225.3,161.3 231.8,228.1 238.3,212.7 244.8,254.4 251.4,228.6 257.9,226.1 264.4,214.0 271.0,259.0 277.5,232.6 284.0,235.6 290.6,246.1 297.1,226.5 303.6,277.9 310.1,290.7 316.7,294.4 323.2,290.5 329.7,325.6 336.3,299.5 342.8,301.3 349.3,333.3 355.9,282.3 362.4,287.7 368.9,314.0 375.4,333.8 382.0,331.0 388.5,326.3 395.0,309.3 401.6,306.8 408.1,333.0 414.6,293.4 421.2,300.5 427.7,303.5 434.2,326.4 440.7,320.3 447.3,294.2 453.8,324.4 460.3,308.5 466.9,319.9 473.4,317.8 479.9,333.4 486.5,288.7 493.0,323.3 499.5,325.3 506.0,326.6 512.6,322.3 519.1,314.4 525.6,316.5 532.2,319.0 538.7,316.3" fill="none" stroke="#4c86e8" stroke-width="2" stroke-linejoin="round" />
+<polyline points="94.7,184.4 127.3,182.9 160.0,190.1 192.6,199.4 225.3,196.7 257.9,196.9 290.6,195.8 323.2,183.5 355.9,184.2 388.5,181.3 421.2,182.6 453.8,184.2 486.5,184.7 519.1,184.3 540.0,184.4" fill="none" stroke="#e8833a" stroke-width="2.5" stroke-linejoin="round" />
+<circle cx="192.6" cy="199.4" r="5" fill="#e8833a" />
+<line x1="192.6" y1="46.0" x2="192.6" y2="348.0" stroke="#e8833a" stroke-width="1" stroke-dasharray="4 4" />
+<text x="200.6" y="60.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#e8833a" text-anchor="start" font-weight="700">best: step 200</text>
+<line x1="558.0" y1="62.0" x2="586.0" y2="62.0" stroke="#4c86e8" stroke-width="3" />
+<text x="592.0" y="66.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#4c86e8" text-anchor="start" font-weight="700">training</text>
+<text x="558.0" y="83.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">questions it studies</text>
+<line x1="558.0" y1="110.0" x2="586.0" y2="110.0" stroke="#e8833a" stroke-width="3" />
+<text x="592.0" y="114.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#e8833a" text-anchor="start" font-weight="700">validation</text>
+<text x="558.0" y="131.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">held-out databases</text>
+<text x="558.0" y="161.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">after the best point,</text>
+<text x="558.0" y="177.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">it memorises instead</text>
+<text x="558.0" y="193.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">of learning</text>
+</svg>

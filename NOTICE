@@ -1,0 +1,15 @@
+This project fine-tunes and redistributes measurements of a derivative of Qwen.
+
+Built with Qwen.
+
+Qwen is licensed under the Qwen RESEARCH LICENSE AGREEMENT, Copyright (c) Alibaba Cloud.
+All Rights Reserved. The base model is Qwen/Qwen2.5-Coder-3B-Instruct; this project modifies
+it by QLoRA fine-tuning on the BIRD training split (see prepared/manifest.json for the exact
+examples). Research and non-commercial use only. Any distribution of the resulting weights
+must carry the Qwen Research License text, this notice, and a statement of modification.
+
+Training and evaluation data come from the BIRD benchmark (https://bird-bench.github.io/),
+licensed CC BY-SA 4.0.
+
+The MIT licence in LICENSE covers the code in this repository only; it does not cover the
+model weights, which remain governed by the Qwen Research License.
