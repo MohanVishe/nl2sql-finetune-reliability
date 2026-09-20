@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" width="720" height="420" role="img" aria-label="pass@k and pass^k, F0 vs F1">
+<title>pass@k and pass^k, F0 vs F1</title>
+<rect x="0" y="0" width="720" height="420" fill="none" />
+<line x1="62.0" y1="374.0" x2="520.0" y2="374.0" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="378.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">0%</text>
+<line x1="62.0" y1="308.4" x2="520.0" y2="308.4" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="312.4" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">10%</text>
+<line x1="62.0" y1="242.8" x2="520.0" y2="242.8" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="246.8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">20%</text>
+<line x1="62.0" y1="177.2" x2="520.0" y2="177.2" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="181.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">30%</text>
+<line x1="62.0" y1="111.6" x2="520.0" y2="111.6" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="115.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">40%</text>
+<line x1="62.0" y1="46.0" x2="520.0" y2="46.0" stroke="#8b93a180" stroke-width="1" />
+<text x="52.0" y="50.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">50%</text>
+<text x="62.0" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">1</text>
+<text x="112.9" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">2</text>
+<text x="163.8" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">3</text>
+<text x="214.7" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">4</text>
+<text x="265.6" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">5</text>
+<text x="316.4" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">6</text>
+<text x="367.3" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">7</text>
+<text x="418.2" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">8</text>
+<text x="469.1" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">9</text>
+<text x="520.0" y="396.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="middle" font-weight="normal">10</text>
+<text x="291.0" y="412.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#8b93a1" text-anchor="middle" font-weight="normal">k  (number of attempts)</text>
+<polygon points="62.0,179.3 112.9,152.4 163.8,138.2 214.7,128.6 265.6,121.4 316.4,115.6 367.3,110.8 418.2,106.8 469.1,103.3 520.0,100.2 520.0,249.7 469.1,247.3 418.2,244.6 367.3,241.4 316.4,237.6 265.6,233.0 214.7,227.1 163.8,218.9 112.9,206.2 62.0,179.3" fill="#4c86e8" fill-opacity="0.10" />
+<polyline points="62.0,179.3 112.9,152.4 163.8,138.2 214.7,128.6 265.6,121.4 316.4,115.6 367.3,110.8 418.2,106.8 469.1,103.3 520.0,100.2" fill="none" stroke="#4c86e8" stroke-width="2.5" stroke-linejoin="round" />
+<polyline points="62.0,179.3 112.9,206.2 163.8,218.9 214.7,227.1 265.6,233.0 316.4,237.6 367.3,241.4 418.2,244.6 469.1,247.3 520.0,249.7" fill="none" stroke="#4c86e8" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="6 4" />
+<polygon points="62.0,144.8 112.9,117.0 163.8,103.2 214.7,94.4 265.6,88.2 316.4,83.5 367.3,79.8 418.2,76.6 469.1,73.8 520.0,71.1 520.0,220.6 469.1,217.9 418.2,214.8 367.3,211.2 316.4,206.9 265.6,201.8 214.7,195.3 163.8,186.5 112.9,172.6 62.0,144.8" fill="#e8833a" fill-opacity="0.10" />
+<polyline points="62.0,144.8 112.9,117.0 163.8,103.2 214.7,94.4 265.6,88.2 316.4,83.5 367.3,79.8 418.2,76.6 469.1,73.8 520.0,71.1" fill="none" stroke="#e8833a" stroke-width="2.5" stroke-linejoin="round" />
+<polyline points="62.0,144.8 112.9,172.6 163.8,186.5 214.7,195.3 265.6,201.8 316.4,206.9 367.3,211.2 418.2,214.8 469.1,217.9 520.0,220.6" fill="none" stroke="#e8833a" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="6 4" />
+<text x="538.0" y="52.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="600">solid = pass@k</text>
+<text x="538.0" y="69.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">at least one of k right</text>
+<text x="538.0" y="96.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="600">dashed = pass^k</text>
+<text x="538.0" y="113.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">all k right</text>
+<line x1="538.0" y1="148.0" x2="566.0" y2="148.0" stroke="#4c86e8" stroke-width="3" />
+<text x="572.0" y="152.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#4c86e8" text-anchor="start" font-weight="700">F0</text>
+<text x="538.0" y="168.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">base model</text>
+<text x="538.0" y="184.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">gap at k=10: 22.8%</text>
+<line x1="538.0" y1="194.0" x2="566.0" y2="194.0" stroke="#e8833a" stroke-width="3" />
+<text x="572.0" y="198.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#e8833a" text-anchor="start" font-weight="700">F1</text>
+<text x="538.0" y="214.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">fine-tuned</text>
+<text x="538.0" y="230.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#8b93a1" text-anchor="start" font-weight="normal">gap at k=10: 22.8%</text>
+<text x="10.0" y="20.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">share of questions</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" width="720" height="250" role="img" aria-label="What changed after fine-tuning">
+<title>What changed after fine-tuning</title>
+<text x="20.0" y="24.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#8b93a1" text-anchor="start" font-weight="700">What changed, per question (496 questions, 10 attempts each)</text>
+<text x="288.0" y="58.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">Right every time, both models</text>
+<rect x="300" y="44" width="87.0" height="19" rx="3" fill="#8b93a1" fill-opacity="0.85" />
+<text x="395.0" y="58.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="700">67</text>
+<text x="288.0" y="98.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">Wrong every time, both models</text>
+<rect x="300" y="84" width="300.0" height="19" rx="3" fill="#8b93a1" fill-opacity="0.85" />
+<text x="608.0" y="98.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="700">231</text>
+<text x="288.0" y="138.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">Became right every time after fine-tuning</text>
+<rect x="300" y="124" width="63.6" height="19" rx="3" fill="#3fa06a" fill-opacity="0.85" />
+<text x="371.6" y="138.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="700">49</text>
+<text x="288.0" y="178.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="normal">Stopped being right every time</text>
+<rect x="300" y="164" width="35.1" height="19" rx="3" fill="#d1544f" fill-opacity="0.85" />
+<text x="343.1" y="178.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="700">27</text>
+<text x="20.0" y="236.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">improved on 116 questions, worsened on 74</text>
+</svg>
