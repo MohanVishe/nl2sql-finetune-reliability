@@ -1,0 +1,18 @@
+# Environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Large or regenerable artifacts -- never committed
+prepared/*.jsonl
+runs/
+merged/
+*.gguf
+*.safetensors
+Modelfile
+
+# Anything accidentally placed inside the repo
+data/
+models/
