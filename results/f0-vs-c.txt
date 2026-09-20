@@ -1,0 +1,19 @@
+== 496 questions answered by every arm, k=10
+
+   arm                      pass@k   pass^k      gap    flaky
+   local-3b-single          42.3%   18.8%   23.6%   23.6%
+   p3-f0-base               41.7%   19.0%   22.8%   22.8%
+
+== p3-f0-base against local-3b-single, k=10
+   pass@k     -0.6%   95% CI [ -2.6%,  +1.6%]  (interval includes zero)
+   pass^k     +0.2%   95% CI [ -1.6%,  +2.2%]  (interval includes zero)
+   gap        -0.8%   95% CI [ -3.6%,  +2.0%]  (interval includes zero)
+   reliability improved on 12 questions, worsened on 11
+
+== cost per attempt
+   arm                     attempts   turns   seconds  prompt tok  reply tok
+   local-3b-single            4,960    1.00       2.9         805         63
+   p3-f0-base                 4,960    1.00       2.7         805         64
+
+   p3-f0-base takes 0.93x the time of local-3b-single
+

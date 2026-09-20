@@ -1,0 +1,31 @@
+{
+  "arm": "p3-f0-base",
+  "model": "p3-f0-base",
+  "ollama_version": "0.34.2",
+  "p1_commit": "a0ea7fbff713860d2f1c44c039229b8849e5ca5d",
+  "command": [
+    "C:\\Workspace\\projects\\gh-work\\nl2sql-reliability\\.venv\\Scripts\\python.exe",
+    "scripts/run_arm.py",
+    "--arm",
+    "p3-f0-base",
+    "--model",
+    "p3-f0-base",
+    "--k",
+    "10",
+    "--out",
+    "C:\\Workspace\\projects\\portfolio-2026\\P3-finetune-reliability\\repo\\results\\p3-f0-base.jsonl"
+  ],
+  "model_details": {
+    "parent_model": "f0-base.Q4_K_M.gguf",
+    "format": "gguf",
+    "family": "qwen2",
+    "families": [
+      "qwen2"
+    ],
+    "parameter_size": "3.1B",
+    "quantization_level": "Q4_K_M"
+  },
+  "started": "2026-09-19T12:01:24+00:00",
+  "finished": "2026-09-19T16:19:22+00:00",
+  "exit_code": 0
+}
