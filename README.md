@@ -10,7 +10,12 @@ capability by 4.4 points and reliability by 4.4 points, leaving the distance bet
 flakiness a product actually feels — unchanged, at 22.8%. Training made the model better. It did
 not make it more dependable.
 
-**And the finding with a price tag on it:** the fine-tuned small model matches a model twice its
+**And what the training did buy, which no benchmark score shows:** it cut queries the database
+outright rejects by 19.8 points — but only a quarter of that became right answers. The rest
+became queries that run perfectly and return the wrong rows. Fine-tuning traded failures you can
+see for failures you cannot, roughly three to one.
+
+**The finding with a price tag on it:** the fine-tuned small model matches a model twice its
 size on the usual benchmark score — and is **12.7 points worse** at giving the same answer every
 time. Swap them on the strength of the benchmark, as a normal evaluation would invite you to,
 and you ship something markedly flakier with nothing in the numbers to warn you.
@@ -134,6 +139,60 @@ that is going on.
 The honest reading is therefore **"no detectable change"**, not "provably identical". The
 interval runs from −4.6 to +4.4, so a real change of a few points either way would not have
 been detected by a study this size. The interval is the finding; the zero is arithmetic.
+
+### What training actually bought: fewer crashes, more confident mistakes
+
+pass@10 and pass^10 only ask *was the answer right*. Every attempt actually ends one of three
+ways, and the difference between the last two matters enormously to anyone shipping this:
+
+- **right** — the query ran and returned the rows the official answer returns;
+- **crashed** — the database rejected the query. Ugly, but *visible*: the application gets an
+  error it can catch, retry, or escalate;
+- **ran, wrong rows** — the query executed perfectly and returned a clean table of the wrong
+  data. **Nothing downstream can tell.** This is the failure that reaches a user.
+
+![How each attempt ended](docs/images/failure-modes.svg)
+
+| | right | crashed (visible) | wrong rows (silent) |
+|---|---|---|---|
+| **F0** — before training | 29.7% | 38.0% | 32.3% |
+| **F1** — after training | 34.9% | 18.2% | 46.9% |
+| **Change** (95% confidence) | **+5.3** [+2.2, +8.3] | **−19.8** [−23.2, −16.5] | **+14.5** [+11.2, +18.0] |
+
+All three intervals exclude zero, so all three moves are real. And the arithmetic is
+uncomfortable: **fine-tuning cleared 19.8 points of crashes, and only 5.3 points of that became
+right answers. The other 14.5 points became silent wrong answers.** Roughly three out of every
+four queries it repaired now run fine and return the wrong thing.
+
+That is what training on 5,851 examples bought at this scale: the model learned the *form* of a
+valid query — the right table names, the right joins, the dataset's house style — much faster
+than it learned to answer the question. Judged on the benchmark, this is a clean 4.4-point win.
+Judged as a product change, it moved failures from a pile you can monitor into a pile you
+cannot. **A team watching its error-rate dashboard would have seen that dashboard improve by
+half while the thing it is meant to protect against got worse.**
+
+### Where the flakiness lives
+
+A reliability gap can mean two completely different things, and they need opposite fixes. Either
+every question is a coin flip, or most questions are settled and a fixed minority is unstable.
+Counting questions by how many of their ten attempts succeeded tells you which:
+
+![Questions by how many of ten attempts were right](docs/images/consistency.svg)
+
+| | never right | flaky (sometimes) | right every time |
+|---|---|---|---|
+| **F0** — before training | 289 | **113** | 94 |
+| **F1** — after training | 267 | **113** | 116 |
+| Prompted 7B | 249 | **68** | 179 |
+
+The unstable middle is **113 questions before fine-tuning and 113 after** — not approximately,
+exactly. Fine-tuning churned the deck thoroughly (190 of 496 questions changed category) and
+left the *amount* of indecision untouched. The 7B, meanwhile, is unstable on only 68.
+
+This is the mechanism behind the headline zero. The gap is a property of that flaky middle, and
+at this scale **fine-tuning relocates questions without shrinking it, while model capacity
+shrinks it.** If you need steadiness, the evidence here points at a bigger model, not more
+examples.
 
 ### The cheaper model that looks equal and is not
 
@@ -273,7 +332,12 @@ uv run python scripts/build_ollama_model.py --gguf ../gguf/f1.Q4_K_M.gguf --name
 # 4. measure both models, then compare
 uv run python scripts/evaluate.py --arm p3-f0-base  --model p3-f0-base
 uv run python scripts/evaluate.py --arm p3-f1-qlora --model p3-f1-qlora
-uv run python scripts/analyse.py && uv run python scripts/make_charts.py
+uv run python scripts/analyse.py
+
+# how each attempt failed, and where the flakiness sits -- the 7B is read, never re-run
+uv run python scripts/failure_modes.py     --reference ../nl2sql-reliability/results/final/local-7b-single.jsonl
+
+uv run python scripts/make_charts.py
 
 # 5. the crossover: the fine-tuned 3B against the earlier project's prompted 7B,
 #    which is read from its published attempts and never re-run
@@ -292,6 +356,7 @@ and the data split.
 | `src/nl2sql_finetune/template.py` | Builds the exact text sent to the model. |
 | `src/nl2sql_finetune/data.py` | Contamination checks and the database-level split. |
 | `src/nl2sql_finetune/tokens.py` | Counts tokens without needing PyTorch. |
+| `src/nl2sql_finetune/stats.py` | The one bootstrap both analyses share. |
 | `scripts/prepare_data.py` | Builds the training and validation files, and a manifest of every decision. |
 | `scripts/train.py` | The QLoRA fine-tune, including a check that only the answer is trained on. |
 | `scripts/merge.py` | Folds the adapter into the model. |
@@ -300,6 +365,7 @@ and the data split.
 | `scripts/build_ollama_model.py` | Loads a model into Ollama with verified settings. |
 | `scripts/evaluate.py` | Runs the published measurement harness unchanged, recording provenance. |
 | `scripts/analyse.py` | pass@k, pass^k, and the confidence intervals. |
+| `scripts/failure_modes.py` | Loud failures vs silent ones, and the flaky middle. |
 | `scripts/make_charts.py` | Draws the figures from the results. |
 | `results/` | Every answer the models gave, and the comparison reports. |
 | `docs/EXPLAINED.md` | The whole study explained from scratch, no background assumed. |
@@ -319,6 +385,21 @@ and the data split.
   official answer did not anticipate.
 - **Repeats are not independent of the machine.** All answers came from the same computer and
   the same server version, recorded alongside the results.
+- **One temperature.** Everything was measured at temperature 0.2, the setting the earlier
+  project published. Flakiness is partly a function of that dial — turn it to zero and most of
+  it disappears, along with some of the capability. These conclusions describe the setting a
+  product would plausibly ship, not every setting.
+- **The kept checkpoint was chosen by validation loss, not by accuracy.** Loss is a proxy for
+  being right, and the two can disagree. A checkpoint picked by execution accuracy on a held-out
+  set might have been a slightly different model — though choosing it honestly would have cost a
+  second evaluation budget.
+- **Trained in 4-bit, merged in 16-bit, served in 4-bit.** Ordinary QLoRA practice, but it means
+  the weights the adapter trained against are not bit-identical to the weights that answered the
+  questions. That mismatch can dampen a fine-tuning effect, never invent one, so it does not
+  threaten the null result — it does mean the effect measured is a floor.
+- **The kept model saw about half of one pass over the data.** Step 200 of 732 is roughly 0.55
+  of an epoch, and validation loss rose after it. This is a study of *light* fine-tuning — which
+  is what the data called for — not of training to exhaustion.
 - **Limited power on the headline.** With 496 questions, the interval on the change in the gap
   is about ±4.5 points. A real improvement in dependability smaller than that would not have
   been detected, and this study would have reported the same "no detectable change". The finding

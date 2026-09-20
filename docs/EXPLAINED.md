@@ -264,6 +264,72 @@ shaved three points off the flakiness, this design would have reported the same 
 detectable change". The correct claim is *this study did not detect a change*, and the correct
 follow-up is a larger question set, not a louder adjective.
 
+### What kind of wrong: the failure that stops being visible
+
+Scoring an answer right or wrong throws away something a team running this in production would
+badly want to know. A wrong answer arrives in one of two ways.
+
+Either the database **rejects** the query — a column that does not exist, a join that cannot be
+made — and the program calling the model gets an exception. That is a bad answer, but it is a
+*loud* one: it can be caught, retried, logged, counted on a dashboard, escalated to a human.
+
+Or the query **runs**, and hands back a neat table of the wrong rows. Nothing anywhere in the
+system can tell. There is no exception, no warning, no signal of any kind. Someone reads the
+number and believes it.
+
+Splitting the same 9,920 attempts three ways:
+
+| | right | crashed (loud) | ran, wrong rows (silent) |
+|---|---|---|---|
+| F0 — untrained | 29.7% | 38.0% | 32.3% |
+| F1 — fine-tuned | 34.9% | 18.2% | 46.9% |
+| difference, paired | +5.3 [+2.2, +8.3] | −19.8 [−23.2, −16.5] | +14.5 [+11.2, +18.0] |
+
+Every interval excludes zero. Follow the arithmetic: fine-tuning removed **19.8 points** worth
+of crashing queries, and **5.3 points** of that turned into right answers. The remaining **14.5
+points** did not become right. They became queries that execute cleanly and return the wrong
+data.
+
+This is worth sitting with, because it is the most practically important number in the study and
+no standard benchmark would ever surface it. Training on thousands of correct examples taught
+the model what a valid query *looks like* — real column names, sane joins, the dataset's house
+style — far faster than it taught the model to answer the question in front of it. The model
+became fluent before it became correct.
+
+For a leaderboard, that is a clean win: +4.4 points. For a system, it is a trade of visible
+failure for invisible failure at about three to one. A team measuring "SQL error rate" — an
+entirely sensible thing to monitor — would have watched that metric halve and concluded the
+fine-tune was a success, while the rate of confidently wrong answers reaching users rose by
+fourteen points.
+
+### Where the flakiness lives, and why that explains the zero
+
+The reliability gap is an average, and averages hide shape. A 22.8-point gap could mean every
+question is a coin flip, or it could mean nearly everything is settled and a stubborn minority
+is unstable. Those two worlds need opposite engineering, so it is worth knowing which one this
+is. Counting questions by how many of their ten attempts succeeded answers it:
+
+| | never right | flaky | right every time |
+|---|---|---|---|
+| F0 — untrained | 289 | **113** | 94 |
+| F1 — fine-tuned | 267 | **113** | 116 |
+| prompted 7B | 249 | **68** | 179 |
+
+Most questions are settled: the model either always gets them or never does. The gap is produced
+by a middle band of about a fifth of the benchmark.
+
+And that band is **exactly the same size before and after fine-tuning — 113 questions, both
+times.** Not "about the same": the same integer. This is not because nothing happened; 190 of
+the 496 questions changed category, 58 became reachable that never were, 36 stopped being
+reachable, 37 went from flaky to rock-solid and 19 went the other way. The deck was thoroughly
+shuffled. The *number of unsettled cards* did not change.
+
+That is the mechanism behind the headline zero, and it is a more useful statement than the zero
+itself. Fine-tuning at this scale moves questions **across** the distribution without compressing
+it. The 7B, which was never fine-tuned at all, has a middle band of 68 — barely more than half.
+On this evidence, indecision is something model capacity buys down and 5,851 training examples
+do not.
+
 ### The prediction that was written down first, and how it did
 
 Two hypotheses were registered before F1 was trained, each taken from published work, along with
@@ -361,6 +427,13 @@ balance and still regresses 74 questions, which no single headline number would 
   differently, and this study cannot say.
 - The scorer is strict but not omniscient: a query can be right in a way the official answer did
   not anticipate.
+- Everything was sampled at temperature 0.2. Flakiness depends on that dial; these numbers
+  describe a plausible product setting, not every setting.
+- The kept checkpoint was chosen by validation loss, which is a proxy for being right rather
+  than the thing itself.
+- The adapter trained against 4-bit weights, was merged into 16-bit ones, and was served from
+  4-bit again. That is standard QLoRA practice, and it can only weaken a measured effect, never
+  manufacture one — but it does make the measured effect a floor.
 - Every answer came from one machine and one serving version, both recorded.
 
 What it does show, whichever way the number falls, is that the two questions — *can it?* and

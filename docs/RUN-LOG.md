@@ -96,6 +96,11 @@ unparsable lines, and 20 `gold_failed` rows each — the two excluded questions 
 F1 against F0 (`results/summary.json`): pass@10 +4.4 [+0.6, +8.3], pass^10 +4.4 [+1.0, +7.9],
 gap +0.0 [−4.6, +4.4].
 
+Attempts were also split by how they failed (`results/failure-modes.json`, seed 0, same paired
+bootstrap): crashes 38.0% → 18.2% [−23.2, −16.5], silent wrong answers 32.3% → 46.9%
+[+11.2, +18.0], right 29.7% → 34.9% [+2.2, +8.3]. Questions by consistency: never/flaky/always
+is 289/113/94 for F0, 267/113/116 for F1, 249/68/179 for the prompted 7B.
+
 F1 against the published prompted 7B (`results/summary-f1-vs-7b.json`), P1 arm A, read from
 `local-7b-single.jsonl` and never re-run: pass@10 −3.6 [−7.7, +0.6], pass^10 −12.7
 [−16.7, −8.5], gap +9.1 [+4.4, +13.7]. This comparison spans Ollama 0.34.1 (the 7B) and
