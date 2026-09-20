@@ -25,5 +25,7 @@
     "parameter_size": "3.1B",
     "quantization_level": "Q4_K_M"
   },
-  "started": "2026-09-19T16:19:28+00:00"
+  "started": "2026-09-19T16:19:28+00:00",
+  "finished": "2026-09-20T13:58:06+00:00",
+  "exit_code": 0
 }
