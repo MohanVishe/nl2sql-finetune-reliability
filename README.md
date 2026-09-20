@@ -274,6 +274,10 @@ uv run python scripts/build_ollama_model.py --gguf ../gguf/f1.Q4_K_M.gguf --name
 uv run python scripts/evaluate.py --arm p3-f0-base  --model p3-f0-base
 uv run python scripts/evaluate.py --arm p3-f1-qlora --model p3-f1-qlora
 uv run python scripts/analyse.py && uv run python scripts/make_charts.py
+
+# 5. the crossover: the fine-tuned 3B against the earlier project's prompted 7B,
+#    which is read from its published attempts and never re-run
+uv run python scripts/analyse.py     --baseline ../nl2sql-reliability/results/final/local-7b-single.jsonl     --treatment results/p3-f1-qlora.jsonl --out results/summary-f1-vs-7b.json
 ```
 
 Tests: `uv run pytest`. They check the exact text sent to the model, the contamination rules,
