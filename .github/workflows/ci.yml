@@ -22,11 +22,11 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Install the project (no training extras -- CPU only here)
-        run: uv sync --extra dev
+      - name: Install the project from the lock file (no training extras -- CPU only here)
+        run: uv sync --locked --extra dev
 
       - name: Lint
         run: uv run ruff check scripts src tests
 
       - name: Test
-        run: uv run pytest -q
+        run: uv run python -m pytest -q -rs

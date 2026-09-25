@@ -11,6 +11,10 @@ dependencies = [
     # The harness this study measures with. Pinned to the exact commit that produced the
     # published P1 numbers, so the prompt builder, scorer and estimators cannot drift.
     "nl2sql-reliability",
+    # Token counting and chat-template rendering without PyTorch (src/nl2sql_finetune/tokens.py).
+    # Needed by prepare_data.py and by the data tests, so they belong here, not in `train`.
+    "tokenizers>=0.21",
+    "jinja2>=3.1",
 ]
 
 [project.optional-dependencies]

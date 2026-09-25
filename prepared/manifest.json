@@ -1,5 +1,8 @@
 {
   "source": "train-00000-of-00001.jsonl",
+  "source_dataset": "birdsql/bird23-train-filtered",
+  "source_revision": "4068469807b255fcfc0816bdd520946fe460d256",
+  "source_sha256": "2ee64aa593e1adc59be7d5b9ce2395372a8ee27fdd94a3fb4d2fe09f3cd34bc8",
   "examples_loaded": 6601,
   "contamination": {
     "shared_databases": [],

@@ -29,6 +29,7 @@ import statistics
 from collections import defaultdict
 from pathlib import Path
 
+from nl2sql_finetune.paths import portable
 from nl2sql_finetune.stats import RESAMPLES, bootstrap
 
 
@@ -129,7 +130,7 @@ def main() -> int:
     summary = {
         "questions": len(questions), "attempts_per_question": depth,
         "strict": args.strict, "resamples": RESAMPLES, "seed": args.seed,
-        "arms": {name: str(path) for name, path in
+        "arms": {name: portable(path) for name, path in
                  (("baseline", args.baseline), ("treatment", args.treatment),
                   ("published", args.published)) if path},
         "curves": curves,

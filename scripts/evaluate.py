@@ -27,8 +27,10 @@ import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
+from nl2sql_finetune.paths import portable
+
 P1_COMMIT = "a0ea7fbff713860d2f1c44c039229b8849e5ca5d"
-DEFAULT_P1 = Path("C:/Workspace/projects/gh-work/nl2sql-reliability")
+DEFAULT_P1 = Path("../nl2sql-reliability")
 HOST = "http://localhost:11434"
 REFERENCE = "qwen2.5-coder:3b"
 
@@ -54,6 +56,7 @@ def main() -> int:
     parser.add_argument("--questions", type=int, default=0, help="pilot subset; 0 = all 498")
     parser.add_argument("--results", type=Path, default=Path("results"))
     args = parser.parse_args()
+    args.p1_dir = args.p1_dir.resolve()  # the harness runs with cwd=p1_dir
 
     head = git(args.p1_dir, "rev-parse", "HEAD")
     if head != P1_COMMIT:
@@ -79,7 +82,8 @@ def main() -> int:
     record = {
         "arm": args.arm, "model": args.model,
         "ollama_version": api("/api/version")["version"],
-        "p1_commit": head, "command": command,
+        "p1_commit": head, "command": [portable(part) if Path(part).is_absolute() else part
+                                        for part in command],
         "model_details": model.get("details"),
         "started": datetime.now(UTC).isoformat(timespec="seconds"),
     }

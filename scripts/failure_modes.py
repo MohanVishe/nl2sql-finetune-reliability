@@ -27,6 +27,7 @@ import statistics
 from collections import defaultdict
 from pathlib import Path
 
+from nl2sql_finetune.paths import portable
 from nl2sql_finetune.stats import RESAMPLES, bootstrap
 
 OUTCOMES = ("correct", "crashed", "silent_wrong")
@@ -124,7 +125,7 @@ def main() -> int:
         "attempts_per_question": depth,
         "resamples": RESAMPLES,
         "seed": args.seed,
-        "arms": {name: str(path) for name, path in
+        "arms": {name: portable(path) for name, path in
                  (("baseline", args.baseline), ("treatment", args.treatment),
                   ("reference", args.reference)) if path},
         "rates": {name: rates(arm, questions, depth) for name, arm in arms.items()},

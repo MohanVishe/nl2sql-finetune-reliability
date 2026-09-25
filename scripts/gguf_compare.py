@@ -22,6 +22,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from nl2sql_finetune.paths import portable
+
 TOOLS = Path("../tools")
 
 
@@ -105,7 +107,7 @@ def main() -> int:
 
     common = len(set(ref) & set(cand))
     report = {
-        "candidate": str(args.candidate), "reference": str(reference_path),
+        "candidate": portable(args.candidate), "reference": portable(reference_path),
         "tensors": {"reference": len(ref), "candidate": len(cand), "common": common,
                     "missing_in_candidate": missing, "extra_in_candidate": extra,
                     "shape_or_type_mismatch": shape_or_type,

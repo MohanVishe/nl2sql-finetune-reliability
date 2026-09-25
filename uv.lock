@@ -767,7 +767,9 @@ name = "nl2sql-finetune-reliability"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "jinja2" },
     { name = "nl2sql-reliability" },
+    { name = "tokenizers" },
 ]
 
 [package.optional-dependencies]
@@ -791,11 +793,13 @@ requires-dist = [
     { name = "accelerate", marker = "extra == 'train'", specifier = ">=1.5" },
     { name = "bitsandbytes", marker = "extra == 'train'", specifier = ">=0.45" },
     { name = "datasets", marker = "extra == 'train'", specifier = ">=3.0" },
+    { name = "jinja2", specifier = ">=3.1" },
     { name = "nl2sql-reliability", git = "https://github.com/MohanVishe/nl2sql-reliability?rev=a0ea7fbff713860d2f1c44c039229b8849e5ca5d" },
     { name = "peft", marker = "extra == 'train'", specifier = ">=0.15" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
     { name = "sentencepiece", marker = "extra == 'train'", specifier = ">=0.2" },
+    { name = "tokenizers", specifier = ">=0.21" },
     { name = "torch", marker = "extra == 'train'", specifier = ">=2.6", index = "https://download.pytorch.org/whl/cu126" },
     { name = "transformers", marker = "extra == 'train'", specifier = ">=4.50" },
     { name = "trl", marker = "extra == 'train'", specifier = ">=0.20" },

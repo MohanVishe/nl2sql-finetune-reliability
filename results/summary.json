@@ -5,9 +5,9 @@
   "resamples": 10000,
   "seed": 0,
   "arms": {
-    "baseline": "results\\p3-f0-base.jsonl",
-    "treatment": "results\\p3-f1-qlora.jsonl",
-    "published": "C:\\Workspace\\projects\\gh-work\\nl2sql-reliability\\results\\final\\local-3b-single.jsonl"
+    "baseline": "results/p3-f0-base.jsonl",
+    "treatment": "results/p3-f1-qlora.jsonl",
+    "published": "nl2sql-reliability/results/final/local-3b-single.jsonl"
   },
   "curves": {
     "baseline": [

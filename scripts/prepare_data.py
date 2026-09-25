@@ -1,6 +1,6 @@
 """Build the training and validation sets, and prove they are fit to train on.
 
-    uv run python scripts/prepare_data.py --p1-dir ../../../gh-work/nl2sql-reliability \
+    uv run python scripts/prepare_data.py --p1-dir ../nl2sql-reliability \
         --train-jsonl ../data/bird23-train-filtered/data/train-00000-of-00001.jsonl \
         --train-dbs ../data/train --model-dir ../models/Qwen2.5-Coder-3B-Instruct
 
@@ -21,6 +21,11 @@ from pathlib import Path
 
 from nl2sql_finetune import data
 
+# The Hugging Face revision of birdsql/bird23-train-filtered this study trained on. The file's
+# sha256 is recorded next to it, so a copy downloaded later can be checked against it.
+DATASET = "birdsql/bird23-train-filtered"
+DATASET_REVISION = "4068469807b255fcfc0816bdd520946fe460d256"
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -33,6 +38,8 @@ def main() -> int:
     parser.add_argument("--holdout", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--limit", type=int, default=0, help="pilot: keep only N train examples")
+    parser.add_argument("--source-revision", default=DATASET_REVISION,
+                        help=f"the {DATASET} revision --train-jsonl was downloaded at")
     args = parser.parse_args()
 
     from nl2sql_reliability import dataset
@@ -101,6 +108,9 @@ def main() -> int:
     quantiles = statistics.quantiles(lengths, n=100)
     manifest = {
         "source": str(args.train_jsonl.name),
+        "source_dataset": DATASET,
+        "source_revision": args.source_revision,
+        "source_sha256": hashlib.sha256(args.train_jsonl.read_bytes()).hexdigest(),
         "examples_loaded": len(examples),
         "contamination": {"shared_databases": sorted(report.shared_databases),
                           "shared_questions": len(report.shared_questions)},
