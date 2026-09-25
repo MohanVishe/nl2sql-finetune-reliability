@@ -23,7 +23,7 @@
 
 <rect x="40" y="108" width="280" height="56" class="box"/>
 <text x="180" y="130" class="h" fill="#4c86e8" text-anchor="middle">left alone</text>
-<text x="180" y="148" class="s" text-anchor="middle">no training at all</text>
+<text x="180" y="148" class="s" text-anchor="middle">no fine-tuning</text>
 
 <rect x="440" y="108" width="280" height="56" class="boxt"/>
 <text x="580" y="130" class="h" fill="#e8833a" text-anchor="middle">fine-tuned (QLoRA)</text>
@@ -47,7 +47,7 @@
 
 <rect x="40" y="296" width="280" height="50" class="box"/>
 <text x="180" y="318" class="h" fill="#4c86e8" text-anchor="middle">F0 — the “before” model</text>
-<text x="180" y="336" class="s" text-anchor="middle">proven identical to the baseline</text>
+<text x="180" y="336" class="s" text-anchor="middle">all 434 tensors match the baseline</text>
 
 <rect x="440" y="296" width="280" height="50" class="boxt"/>
 <text x="580" y="318" class="h" fill="#e8833a" text-anchor="middle">F1 — the “after” model</text>

@@ -28,16 +28,19 @@ Two numbers, computed from the same ten answers per question, separate this:
   It answers *"can the model do this at all?"*
 - **pass^10** — all ten attempts are right. It answers *"can I depend on it?"*
 
-Nobody sane runs a product on "at least one of ten". But almost every published score is that
-shape, because benchmarks grew up around research, where a human reads the output.
+Nobody sane runs a product on "at least one of ten". But benchmark scores rarely ask whether an
+answer repeats: they report one attempt, or the best of several, because benchmarks grew up
+around research, where a human reads the output.
 
 The distance between the two is the **reliability gap**. For the untrained model measured here
 it is over 20 points: a benchmark score of 41.7% comes with only 19.0% of questions answered
 correctly every single time.
 
-The estimators themselves are not new. pass@k is standard in code generation, and pass^k comes
-from agent-benchmark work. What is missing from the literature is what happens to *the gap*
-when you fine-tune. That is the hole this fills.
+The estimators themselves are not new. pass@k is standard in code generation (Chen et al. 2021),
+and pass^k comes from agent-benchmark work (τ-bench, Yao et al. 2024). We did not find a
+published measurement of what happens to *the gap* when you fine-tune; that is the question
+this study adds. The README's [related work](../README.md#10-related-work) section lists the
+papers this builds on, with links.
 
 ---
 
@@ -58,9 +61,10 @@ Does it also make the model **dependable**? Two stories, both plausible:
   flakiness in an untrained model is formatting drift and hesitation, not genuine confusion.
   Removing that could close the gap.
 
-The prediction was registered in advance, with the deciding rule written down before the
-numbers existed: the headline is the **change in the gap**, with a confidence interval, and the
-interval has to exclude zero before the result is called a finding at all.
+The prediction and the deciding rule were written into the project plan before training (that
+plan was not independently timestamped): the headline is the **change in the gap**, with a
+confidence interval, and the interval has to exclude zero before the result is called a finding
+at all.
 
 ---
 
@@ -89,8 +93,9 @@ That is F0, the control. If F0 does not reproduce the published number, the pipe
 not the model.
 
 This turned out to matter more than expected: Ollama, the serving program, **updated itself**
-from 0.34.1 to 0.34.2 partway through the study. Without F0, that alone would have been
-indistinguishable from an effect of fine-tuning.
+from 0.34.1 to 0.34.2 between the earlier study and this one. Both of this study's models ran on
+0.34.2, but the published baseline and the 7B ran on 0.34.1. Without F0, that change alone
+would have been indistinguishable from an effect of fine-tuning.
 
 ### Four ways the pipeline nearly lied
 
@@ -126,9 +131,10 @@ of these by looking.
    have been fed a token the baseline never saw. Tokenizer files are now copied byte-for-byte
    instead of being re-saved.
 
-After those four fixes, F0's file is **byte-for-byte identical** to the published model: all
-434 blocks and every setting. And when measured, it reproduced the published scores within
-noise. Only then was F1 worth comparing to anything.
+After those four fixes, every one of the **434 tensors** in F0's file is **byte-identical** to
+the published model's, and every metadata setting matches; only their order in the file header
+differs, which is why the two files' SHA-256 hashes differ. And when measured, F0 reproduced the
+published scores within noise. Only then was F1 worth comparing to anything.
 
 ---
 
@@ -137,7 +143,7 @@ noise. Only then was F1 worth comparing to anything.
 ### The data, and the thing that ruins studies
 
 Training used 5,851 question-and-query pairs from the BIRD benchmark's training split, covering
-66 databases.
+65 databases.
 
 The failure that quietly destroys studies like this is **contamination**: a training example
 that is also in the test set. The model then looks brilliant because it is being graded on its
@@ -145,8 +151,8 @@ homework. The check here is deliberately blunt: no database may appear in both s
 question may appear in both after normalising the text. The build refuses to write any files if
 either check fires. On the real data: zero shared databases, zero shared questions.
 
-A second, subtler rule: the validation set — the questions used to decide when to stop training
-— is made of **three whole databases** that never appear in training. Holding out individual
+A second, subtler rule: the validation set — the questions used to choose which checkpoint to
+keep — is made of **three whole databases** that never appear in training. Holding out individual
 questions would not be enough, because a model that has seen a database's structure has an
 advantage on every question about it.
 
@@ -158,8 +164,8 @@ database whose structure alone fills about 5,000 tokens.
 
 Training all 3 billion numbers in the model needs far more memory than a home graphics card
 has. **QLoRA** solves this in two moves: compress the original model to 4 bits and freeze it,
-then train a small set of new numbers bolted alongside — an **adapter** of about 60 million
-numbers. Peak memory: 4.1 GB, on an 8 GB card, in 3.5 hours.
+then train a small set of new numbers bolted alongside — an **adapter** of about 30 million
+numbers (29.9 million). Peak memory: 4.1 GB, on an 8 GB card, in 3.5 hours.
 
 One check runs before training starts. The model sees the database structure, the question, and
 then writes the answer; only the answer should be trained on. Getting this wrong — training on
@@ -167,18 +173,20 @@ the whole text — produces a model that looks trained and is quietly worse. So 
 decoded and the trained-on portion must be exactly the answer and its end marker, or the script
 refuses to run.
 
-### Knowing when to stop
+### Choosing which checkpoint to keep
 
-Training longer is not better. The model was checked against the held-out databases every 50
-steps:
+Training longer is not better. The run went the full 732 steps (two passes over the data), and
+the model was checked against the held-out databases every 50 steps:
 
 ![Training and validation loss](images/training-curve.svg)
 
-The score on questions it studies keeps improving. The score on held-out databases stops
-improving at step 200 and then drifts the wrong way. That divergence is **overfitting** —
-memorising instead of learning — and it decides which version to keep: the step-200 one, not
-the final one. The rest of the run is published rather than deleted, because knowing where a
-recipe starts to hurt is part of the result.
+The score on questions it studies keeps improving. The loss on held-out databases is lowest at
+step 200 (0.1473; steps 200–350 are all within 0.002 of it) and rises through the second pass.
+That divergence is **overfitting** — memorising instead of learning — and it decides which
+version to keep: the best checkpoint, step 200, was selected on held-out validation loss, not
+the final one. The whole run is published, because knowing where a recipe starts to hurt is
+part of the result. There was no evaluation at step 0, so the held-out improvement the first 50
+steps bought is not measured; the next run logs one.
 
 One change is visible without any statistics. Asked a question, the untrained model writes
 free-form SQL, while the fine-tuned model writes in the dataset's house style: short table
@@ -188,14 +196,18 @@ aliases, one line, no trailing semicolon. It learned the *form* of the answers.
 
 ## 5. How the answers are scored
 
-Every answer is scored by **running it**. The model's query and the official correct query are
-both executed against the real database, and the result tables are compared. A query that is
+Every answer is scored by **running it**. The model's query and the reference query are both
+executed against the real database, and the result tables are compared. The questions and
+reference queries are **Arcwise-Plat-SQL** (Jin et al. 2026, CC BY-SA 4.0): the 498 questions
+of BIRD's Mini-Dev set with the SQL answer key corrected, after its authors found annotation
+errors in more than half of the original. A query that is
 worded differently but returns the right rows counts as right; a query that looks plausible but
 returns the wrong rows counts as wrong.
 
-Two questions are excluded because their official query takes longer than 30 seconds to run
+Two questions are excluded because their reference query takes longer than 30 seconds to run
 against the database — the same two the published baseline excluded. That leaves 496 scored
-questions, each answered ten times by each model: 9,920 scored answers.
+questions, each answered ten times by each model: 4,960 scored answers per model, 9,920 in all
+(9,960 answer records are published, including the 40 for the two excluded questions).
 
 The measurement code is the earlier project's, used **unchanged and pinned to one commit**. The
 wrapper script here refuses to run if that code has been modified, and records the serving
@@ -285,13 +297,16 @@ Splitting the same 9,920 attempts three ways:
 | F1 — fine-tuned | 34.9% | 18.2% | 46.9% |
 | difference, paired | +5.3 [+2.2, +8.3] | −19.8 [−23.2, −16.5] | +14.5 [+11.2, +18.0] |
 
-Every interval excludes zero. Follow the arithmetic: fine-tuning removed **19.8 points** worth
-of crashing queries, and **5.3 points** of that turned into right answers. The remaining **14.5
-points** did not become right. They became queries that execute cleanly and return the wrong
-data.
+Every interval excludes zero. Follow the arithmetic: crashing queries fell by **19.8 points**,
+right answers rose by **5.3 points**, and queries that execute cleanly and return the wrong data
+rose by **14.5 points**. The attempts are independent samples, so no single query is being
+followed from one model to the other; these are shifts in rates. But in net terms, of the
+ground crashes gave up, about a quarter went to right answers and three quarters to silent
+wrong ones.
 
-This is worth sitting with, because it is the most practically important number in the study and
-no standard benchmark would ever surface it. Training on thousands of correct examples taught
+This is worth sitting with, because it is one of the two most practically important results in
+the study (the other is the 7B comparison below) and a right-or-wrong benchmark score does not
+surface it. Training on thousands of correct examples taught
 the model what a valid query *looks like* — real column names, sane joins, the dataset's house
 style — far faster than it taught the model to answer the question in front of it. The model
 became fluent before it became correct.
@@ -302,7 +317,7 @@ entirely sensible thing to monitor — would have watched that metric halve and 
 fine-tune was a success, while the rate of confidently wrong answers reaching users rose by
 fourteen points.
 
-### Where the flakiness lives, and why that explains the zero
+### Where the flakiness lives
 
 The reliability gap is an average, and averages hide shape. A 22.8-point gap could mean every
 question is a coin flip, or it could mean nearly everything is settled and a stubborn minority
@@ -316,24 +331,27 @@ is. Counting questions by how many of their ten attempts succeeded answers it:
 | prompted 7B | 249 | **68** | 179 |
 
 Most questions are settled: the model either always gets them or never does. The gap is produced
-by a middle band of about a fifth of the benchmark.
+by a middle band of 113 questions, about a fifth of the benchmark (22.8%).
 
-And that band is **exactly the same size before and after fine-tuning — 113 questions, both
-times.** Not "about the same": the same integer. This is not because nothing happened; 190 of
-the 496 questions changed category, 58 became reachable that never were, 36 stopped being
-reachable, 37 went from flaky to rock-solid and 19 went the other way. The deck was thoroughly
-shuffled. The *number of unsettled cards* did not change.
+That band is the same size before and after fine-tuning — 113 questions both times — and this
+is not a second finding alongside the zero; it is the same one. At k = 10, the gap *is* the
+share of questions that are right sometimes but not always, so "the band stayed at 113" and
+"Δgap = 0" are one fact stated twice. What the counts add is shape and churn: 150 of the 496
+questions changed category (190 changed how many of their ten attempts were right), 58 became
+reachable that never were, 36 stopped being reachable, 37 went from flaky to rock-solid and 19
+went the other way. Fine-tuning at this scale moved questions **across** the distribution
+without compressing the middle of it.
 
-That is the mechanism behind the headline zero, and it is a more useful statement than the zero
-itself. Fine-tuning at this scale moves questions **across** the distribution without compressing
-it. The 7B, which was never fine-tuned at all, has a middle band of 68 — barely more than half.
-On this evidence, indecision is something model capacity buys down and 5,851 training examples
-do not.
+The prompted 7B — instruction-tuned by its makers, with no task-specific fine-tuning — has a
+middle band of 68. In this comparison the larger model was steadier; a single model pair cannot
+say whether its size is the cause.
 
 ### The prediction that was written down first, and how it did
 
-Two hypotheses were registered before F1 was trained, each taken from published work, along with
-the rule that would decide between them:
+Two hypotheses were written into the project plan before F1 was trained, each drawn from
+published work, along with the rule that would decide between them. The plan was not
+independently timestamped; next time it is committed to the repository before training, so the
+commit carries the date.
 
 - **H-coverage** — fine-tuning expands what the model can solve faster than it makes it
   consistent. pass@10 rises more than pass^10, **the gap widens**.
@@ -342,40 +360,49 @@ the rule that would decide between them:
 
 **The stated leaning was H-diversity**, on the reasoning that the 3B's unusually wide 23.6-point
 gap in the earlier project looked like inconsistency rather than inability — the kind of spread
-fine-tuning is documented to collapse. The decision rule, fixed in advance: a 95% interval on
-Δgap entirely below zero supports H-diversity, entirely above supports H-coverage, and an
-interval straddling zero is reported as "no detectable change".
+supervised fine-tuning has been reported to narrow (Li et al. 2024; Klypa et al. 2026).
+H-coverage draws on work finding that training can move what a model can solve and its
+single-attempt accuracy by different amounts (Yue et al. 2025). The decision rule, fixed in
+advance: a 95% interval on Δgap entirely below zero supports H-diversity, entirely above
+supports H-coverage, and an interval straddling zero is reported as "no detectable change".
 
 **The interval straddles zero. Neither hypothesis was supported, including the leaning.** Both
-mechanisms are real and documented; on this task, at this size, they appear to have cancelled,
+mechanisms have been reported elsewhere; on this task, at this size, they may have cancelled,
 or neither was strong enough to see. That is written here because it was promised in advance,
 and because a prediction that only gets reported when it lands is not a prediction.
 
-A second prediction was registered too: that the fine-tuned 3B would **pass** the prompted 7B on
-pass@10. It drew level instead — the interval includes zero — which is the subject of the next
-section.
+A second prediction was written down too: that the fine-tuned 3B would **pass** the prompted 7B
+on pass@10. It did not. On pass@10 the two cannot be separated, and on every stricter measure
+the 3B is behind — the subject of the next section.
 
-### The crossover: the same score, a fifth of the dependability
+### The crossover: close on one number, behind on the rest
 
-The other question the study was built to answer is a purchasing question. A 7B model costs
-about twice as much to serve as a 3B. The earlier project measured a prompted 7B on these exact
+The other question the study was built to answer is a purchasing question: a 3B model is cheaper
+to run than a 7B, so can a fine-tuned 3B stand in for one? The 7B is Qwen2.5-Coder-7B-Instruct —
+instruction-tuned by its makers, with no task-specific fine-tuning — at 7.6 billion parameters
+to the 3B's 3.1 billion. On this machine it took 2.99 s per attempt against F1's 2.65 s (1.13×,
+from the `gen_seconds` recorded with every attempt); what that costs in production depends on
+hardware and load and was not measured. The earlier project measured this 7B on these exact
 questions, so the comparison needs no new compute — that arm was never re-run, only read.
 
-| | pass@10 | pass^10 | gap |
-|---|---|---|---|
-| prompted 7B | 49.8% | 36.1% | 13.7% |
-| fine-tuned 3B | 46.2% | 23.4% | 22.8% |
-| difference, paired | −3.6 [−7.7, **+0.6**] | −12.7 [−16.7, −8.5] | +9.1 [+4.4, +13.7] |
+| | pass@10 | pass@1 (single attempt) | pass^10 | gap |
+|---|---|---|---|---|
+| prompted 7B | 49.8% | 42.9% | 36.1% | 13.7% |
+| fine-tuned 3B | 46.2% | 34.9% | 23.4% | 22.8% |
+| difference, paired | −3.6 [−7.7, +0.6] | −8.0 [−11.6, −4.3] | −12.7 [−16.7, −8.5] | +9.1 [+4.4, +13.7] |
 
-On capability the two are **not distinguishable by this study**. On reliability the 3B is worse
-by 12.7 points, with an interval nowhere near zero, and per question the asymmetry is stark:
-**92 questions the 7B got right all ten times, the fine-tuned 3B does not**, against 29 in the
-other direction.
+On pass@10 the two are **not distinguishable by this study** — which is not the same as equal:
+the interval allows a deficit of nearly eight points, and the same "not detected" reading
+applies here as to the gap. On single-attempt accuracy, the number a one-attempt-per-question
+evaluation reports, the 3B is **8.0 points behind**. On pass^10 it is **12.7 points behind**.
+Neither of those intervals comes near zero. Per question: **92 questions the 7B got right all
+ten times, the fine-tuned 3B does not**, against 29 in the other direction. The 7B is right every
+time on 179 questions and the fine-tuned 3B on 116 — about a third fewer.
 
-This is the most directly actionable thing here. A team evaluating the swap the usual way — one
-attempt per question, a single benchmark score — sees a tie, takes the cheaper model, and ships
-a system that fails to reproduce itself on a fifth more of its workload. Nothing in the standard
-evaluation would have shown them that, because the standard evaluation asks each question once.
+This is the most directly actionable thing here. The deficit widens from 3.6 points to 8.0 to
+12.7 as the measure moves from "right at least once" to "right on one try" to "right every
+time". A team choosing between these two models on pass@10 would see the smallest difference of
+the three; the closer the use case is to "must be right every time", the larger the shortfall.
 
 The comparison does cross a serving-version boundary: the 7B's answers were produced on Ollama
 0.34.1 and F1's on 0.34.2. F0 is what makes it defensible — the same untrained model through
@@ -425,15 +452,21 @@ balance and still regresses 74 questions, which no single headline number would 
 - One model, one size (3 billion numbers), one task (database questions), one training recipe,
   one run. A larger model, a different task, or different training settings may behave
   differently, and this study cannot say.
-- The scorer is strict but not omniscient: a query can be right in a way the official answer did
-  not anticipate.
+- The model trained on BIRD's original training SQL and was scored against Arcwise-Plat-SQL's
+  corrected answer key. Where the correction changed conventions the training data still
+  follows, part of the rise in silent wrong answers could be convention mismatch rather than
+  wrong reasoning. Next: hand-check a sample of F1's silent wrong answers, and re-score against
+  the uncorrected key.
+- The scorer is strict but not omniscient: a query can be right in a way the reference answer
+  did not anticipate.
 - Everything was sampled at temperature 0.2. Flakiness depends on that dial; these numbers
   describe a plausible product setting, not every setting.
 - The kept checkpoint was chosen by validation loss, which is a proxy for being right rather
   than the thing itself.
 - The adapter trained against 4-bit weights, was merged into 16-bit ones, and was served from
-  4-bit again. That is standard QLoRA practice, and it can only weaken a measured effect, never
-  manufacture one — but it does make the measured effect a floor.
+  4-bit again. That is standard QLoRA practice, and it means the evaluated weights are not the
+  ones the adapter trained against: the measured effect is that of the adapter as deployed.
+  Next: evaluate one 16-bit merged checkpoint on a subset of questions to bound the difference.
 - Every answer came from one machine and one serving version, both recorded.
 
 What it does show, whichever way the number falls, is that the two questions — *can it?* and

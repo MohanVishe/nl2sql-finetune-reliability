@@ -28,5 +28,5 @@
 <text x="204.0" y="228.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">crashed (visible failure)</text>
 <rect x="382.0" y="219" width="11" height="11" rx="2" fill="#d1544f" fill-opacity="0.85" />
 <text x="399.0" y="228.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">ran, wrong rows (silent failure)</text>
-<text x="20.0" y="260.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">Fine-tuning removed 19.8 points of crashes and turned only 5.3 of them into right answers.</text>
+<text x="20.0" y="260.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">F1 against F0: crashes fell 19.8 points; right answers rose 5.3, silent wrong answers 14.5.</text>
 </svg>

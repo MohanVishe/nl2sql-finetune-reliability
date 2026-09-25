@@ -19,12 +19,16 @@ machine. The security setting was left on; the build moved instead.
 
 ## Data
 
-- Training: `birdsql/bird23-train-filtered`, 6,601 examples over 69 databases, plus BIRD's
+- Training: `birdsql/bird23-train-filtered` at revision `4068469807b2` (file sha256 in the
+  manifest), 6,601 examples over 69 databases, plus BIRD's
   `train.zip` (8,919,543,554 bytes, matching the published size, all files CRC-checked).
 - 383 examples dropped for length, all from `works_cycles`, whose schema alone is about 5,000
   tokens. Dropped, never truncated.
-- Final split: **5,851 training / 367 validation**, the validation set being three whole
-  databases (`image_and_language`, `retail_complains`, `video_games`) the model never trains on.
+- Final split: **5,851 training examples over 65 databases / 367 validation**, the validation
+  set being three whole databases (`image_and_language`, `retail_complains`, `video_games`) the
+  model never trains on.
+- Evaluation set: Arcwise-Plat-SQL (498 BIRD Mini-Dev questions with a corrected SQL answer
+  key, CC BY-SA 4.0), read from the pinned harness clone.
 - Contamination check against the evaluation set: **0 shared databases, 0 shared questions.**
 - Exact contents: `prepared/manifest.json`.
 
@@ -34,14 +38,18 @@ machine. The security setting was left on; the build moved instead.
 |---|---|
 | Started | 2026-09-19 08:14 IST |
 | Finished | 2026-09-19 17:22 IST (3.48 h of compute; the machine slept in between) |
-| Steps | 732 (2 epochs), effective batch 16, lr 1e-4 cosine, LoRA r=16 α=32 on all seven projections |
+| Steps | 732 (2 epochs, all completed), effective batch 16, lr 1e-4 cosine, LoRA r=16 α=32 on all seven projections (29.9M trained parameters) |
 | Peak VRAM | 4.10 GB |
-| Best checkpoint | **step 200**, validation loss 0.1473 |
+| Selected checkpoint | **step 200**, validation loss 0.1473 — the lowest of the 15 evaluations |
 | Final checkpoint | step 732, validation loss 0.1544 |
 
-Validation loss bottomed at step 200 and rose through epoch 2 while training loss kept falling,
-so the step-200 checkpoint was kept. The saved adapter was verified to be that checkpoint:
-504 tensors, maximum absolute difference 0.
+The run trained all 732 steps. Validation loss was evaluated every 50 steps; it was lowest at
+step 200 (steps 200–350 were all within 0.002 of it) and rose through epoch 2 while training
+loss kept falling. `load_best_model_at_end` then selected the step-200 checkpoint on held-out
+validation loss — checkpoint selection, not early stopping. The saved adapter was verified to be
+that checkpoint: 504 tensors, maximum absolute difference 0. No step-0 evaluation was logged, so
+the held-out improvement over the untrained model is not measured (step 50 already equals the
+final 0.1544); the next run logs one.
 
 A 20-step smoke run preceded it. Its purpose was the loss mask: the supervised tokens were
 decoded and had to be exactly the fenced SQL answer and the end-of-turn marker.
@@ -69,28 +77,36 @@ removed. Each was caught by a check, not by inspection:
    model saw a start token the baseline never saw. `merge.py` now copies tokenizer files
    byte-for-byte.
 
-Result: **F0 is byte-identical to Ollama's published `qwen2.5-coder:3b`** — all 434 tensors and
-every metadata key (`results/f0-vs-reference.json`). F1 differs from F0 in exactly the 252
+Result: **all 434 of F0's tensors are byte-identical to Ollama's published `qwen2.5-coder:3b`,
+and every metadata key has the same value** (`results/f0-vs-reference.json`). The files
+themselves are not byte-identical: the metadata keys are written in a different order, so the
+SHA-256 of F0 (`916368a3…`) differs from the reference blob's (`4a188102…`) at the same size,
+1,929,903,072 bytes. F1 differs from F0 in exactly the 252
 tensors LoRA trained (7 projections × 36 layers); the other 182 are byte-identical.
 
 ## Evaluation
 
 Both arms: 498 questions × 10 attempts, temperature 0.2, context 8,192, at most 512 new tokens,
-single turn. Two questions are excluded from scoring because their official query times out at
+single turn. Two questions are excluded from scoring because their reference query times out at
 30 s, leaving **496 scored questions** — the same exclusions the published baseline made.
 
 | Arm | Attempts | Result |
 |---|---|---|
-| F0 (`p3-f0-base`) | 4,980 | Complete. pass@10 41.7%, pass^10 19.0%, gap 22.8% |
-| F1 (`p3-f1-qlora`) | 4,980 | Complete. pass@10 46.2%, pass^10 23.4%, gap 22.8% |
+| F0 (`p3-f0-base`) | 4,980 (4,960 scored) | Complete. pass@10 41.7%, pass^10 19.0%, gap 22.8% |
+| F1 (`p3-f1-qlora`) | 4,980 (4,960 scored) | Complete. pass@10 46.2%, pass^10 23.4%, gap 22.8% |
 
 F0 against the published baseline (`results/f0-vs-c.txt`): pass@10 −0.6 [−2.6, +1.6],
 pass^10 +0.2 [−1.6, +2.2], gap −0.8 [−3.6, +2.0]. All intervals include zero, so neither this
-pipeline nor the Ollama update (0.34.1 → 0.34.2 mid-study) moves the numbers.
+pipeline nor the Ollama update (0.34.1 → 0.34.2, between the earlier study and this one; both
+arms here ran on 0.34.2) moves the numbers.
 
-F1 ran from 2026-09-19 21:49 IST to 2026-09-20 19:28 IST, exit code 0, across four stops (three
-bugchecks and one planned restart, below). Both result files were checked after the final
-attempt: 4,980 rows each, 4,980 unique `(arm, question, attempt)` keys, no duplicates, no
+F0 ran from 2026-09-19 17:31 to 21:49 IST, with three stops: a GPU-contention pause
+(17:34–17:40), a pause at the owner's request (18:00–18:15) and a bugcheck (20:05–20:10).
+F1 ran from 2026-09-19 21:49 IST to 2026-09-20 19:28 IST, exit code 0, with four stops: bugchecks
+at 22:00 (resumed 22:16), 23:07 (resumed the next day at 16:07) and 16:59 (resumed 17:09), and
+the planned restart at 18:23 (resumed 18:53). Stop and resume points are read from the per-row
+timestamps in the result files and the Windows event log. Both result files were checked after
+the final attempt: 4,980 rows each, 4,980 unique `(arm, question, attempt)` keys, no duplicates, no
 unparsable lines, and 20 `gold_failed` rows each — the two excluded questions × ten attempts.
 
 F1 against F0 (`results/summary.json`): pass@10 +4.4 [+0.6, +8.3], pass^10 +4.4 [+1.0, +7.9],
@@ -103,30 +119,35 @@ is 289/113/94 for F0, 267/113/116 for F1, 249/68/179 for the prompted 7B.
 
 F1 against the published prompted 7B (`results/summary-f1-vs-7b.json`), P1 arm A, read from
 `local-7b-single.jsonl` and never re-run: pass@10 −3.6 [−7.7, +0.6], pass^10 −12.7
-[−16.7, −8.5], gap +9.1 [+4.4, +13.7]. This comparison spans Ollama 0.34.1 (the 7B) and
-0.34.2 (F1); F0 is the control that licenses it.
+[−16.7, −8.5], gap +9.1 [+4.4, +13.7]. Single-attempt accuracy (the `correct` rate,
+`results/failure-modes.json`): −8.0 [−11.6, −4.3]. This comparison spans Ollama 0.34.1 (the 7B)
+and 0.34.2 (F1); F0 is the control that licenses it.
 
 ## Incidents
 
 - **Ollama updated itself** from 0.34.1 to 0.34.2 between the published baseline and this study.
   This is why F0 exists and why `evaluate.py` records the server version and refuses to resume
   an arm on a different one.
-- **Three Windows bugchecks** during evaluation (2026-09-19 20:07, 22:00, 23:07; codes 0x7E,
-  0x133, 0xD1). The machine's event log shows 17 in 60 days with varied codes, 15 of them
-  starting before this project — a machine problem, not a study problem. Each stop cost nothing:
-  the harness resumes from its completed attempts, and no partial line was ever written. The
+- **Four Windows bugchecks** during evaluation: 2026-09-19 20:05 (0x7E, during F0), 22:00
+  (0x133) and 23:07 (0xD1), and 2026-09-20 16:59 (0xF7), the last three during F1. The
+  machine's event log shows 20 bugchecks from 2026-07-20 to the end of the evaluation, with
+  varied codes, 15 of them before this project began — a machine problem, not a study problem.
+  Each stop cost nothing: the harness resumes from its completed attempts, and no partial line
+  was ever written. The
   files were checked for duplicate `(question, attempt)` pairs after every resume: none.
 - **Planned restart mid-run** (2026-09-20 18:23 IST). The evaluation was stopped deliberately
   at 4,198 of 4,980 attempts so the machine could be rebooted. Order matters: the watchdog was
   stopped first, or it would have relaunched the run within the minute, and only then the worker
   process tree. The file was checked while idle — 4,198 rows, no duplicate keys, last line
-  complete. It resumed 30 minutes later at question 1,171 attempt 7, the attempt immediately
-  after the last completed one, and ran the remaining 782 attempts at 0.36 attempts/second.
+  complete. It resumed 30 minutes later with row 4,199 — question 1169, attempt index 8 (its
+  ninth attempt), the attempt immediately after the last completed one — and ran the remaining
+  782 attempts at 0.38 attempts/second.
   Ollama had to be restarted after the reboot and came back on the same 0.34.2; had it
   self-updated in the meantime, `evaluate.py` would have refused to resume the arm rather than
   mixing two server versions in one result file.
 
-- **GPU contention.** An unrelated 7B model was served on the same 8 GB card for a few minutes;
-  Ollama evicted and reloaded a model per request, and throughput fell from 0.35 to 0.15
-  attempts per second. The evaluation was paused and resumed once the card was free. Outputs are
+- **GPU contention** (F0, 2026-09-19 17:30–17:40). An unrelated 7B model was served on the same
+  8 GB card for a few minutes; Ollama evicted and reloaded a model per request, and throughput
+  fell from 0.35 to 0.15 attempts per second. The evaluation was paused after 27 attempts and
+  resumed once the card was free. Outputs are
   unaffected — every load put all 37 layers on the GPU — but the two must not share a card.

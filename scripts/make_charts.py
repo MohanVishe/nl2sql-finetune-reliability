@@ -231,6 +231,8 @@ def failure_modes_chart(report: dict, out: Path) -> None:
     """Every attempt, split by how it failed -- loudly or silently."""
     names = {"baseline": "F0  untrained", "treatment": "F1  fine-tuned",
              "reference": "7B  prompted"}
+    # Net shifts in rates across independent attempts -- no query is tracked between models.
+    shift = report["differences"]["treatment_minus_baseline"]
     rows = []
     for arm, label in names.items():
         r = report["rates"].get(arm)
@@ -244,8 +246,9 @@ def failure_modes_chart(report: dict, out: Path) -> None:
     _stacked(rows, title=f"How each attempt ended "
                          f"({report['questions']} questions x "
                          f"{report['attempts_per_question']} attempts)",
-             note="Fine-tuning removed 19.8 points of crashes and turned only 5.3 of them "
-                  "into right answers.",
+             note=f"F1 against F0: crashes fell {-100 * shift['crashed']['delta']:.1f} points; "
+                  f"right answers rose {100 * shift['correct']['delta']:.1f}, silent wrong "
+                  f"answers {100 * shift['silent_wrong']['delta']:.1f}.",
              unit="rate", out=out)
 
 

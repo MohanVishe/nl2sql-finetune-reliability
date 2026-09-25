@@ -87,6 +87,9 @@ def test_new_charts_are_well_formed_svg(tmp_path):
                   "treatment": {"correct": 0.6, "crashed": 0.1, "silent_wrong": 0.3}},
         "consistency": {"baseline": {"never": 1, "flaky": 1, "always": 1},
                         "treatment": {"never": 0, "flaky": 1, "always": 2}},
+        "differences": {"treatment_minus_baseline": {
+            "correct": {"delta": 0.1}, "crashed": {"delta": -0.15},
+            "silent_wrong": {"delta": 0.05}}},
     }
     for draw, name in ((make_charts.failure_modes_chart, "failure-modes.svg"),
                        (make_charts.consistency_chart, "consistency.svg")):
@@ -94,3 +97,5 @@ def test_new_charts_are_well_formed_svg(tmp_path):
         draw(report, out)
         xml.dom.minidom.parseString(out.read_text(encoding="utf-8"))
         assert "<svg" in out.read_text(encoding="utf-8")
+    note = (tmp_path / "failure-modes.svg").read_text(encoding="utf-8")
+    assert "crashes fell 15.0 points; right answers rose 10.0, silent wrong answers 5.0" in note

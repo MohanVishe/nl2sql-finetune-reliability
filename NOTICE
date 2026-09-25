@@ -8,8 +8,16 @@ it by QLoRA fine-tuning on the BIRD training split (see prepared/manifest.json f
 examples). Research and non-commercial use only. Any distribution of the resulting weights
 must carry the Qwen Research License text, this notice, and a statement of modification.
 
-Training and evaluation data come from the BIRD benchmark (https://bird-bench.github.io/),
-licensed CC BY-SA 4.0.
+Training data come from the BIRD benchmark (https://bird-bench.github.io/), licensed
+CC BY-SA 4.0: its training databases and the filtered split birdsql/bird23-train-filtered
+(revision 4068469807b255fcfc0816bdd520946fe460d256).
+
+Evaluation data are Arcwise-Plat-SQL (https://github.com/uiuc-kang-lab/text_to_sql_benchmarks)
+by Tengjun Jin, Yoojin Choi, Yuxuan Zhu and Daniel Kang, "Pervasive Annotation Errors Break
+Text-to-SQL Benchmarks and Leaderboards" (arXiv:2601.08778, VLDB 2026): BIRD Mini-Dev with a
+corrected SQL answer key, building on Arcwise's corrections, licensed CC BY-SA 4.0. It is read
+from the measurement harness's data directory and is not redistributed here; the result files
+in results/ contain question ids and the model's answers, not the dataset.
 
 The MIT licence in LICENSE covers the code in this repository only; it does not cover the
 model weights, which remain governed by the Qwen Research License.
