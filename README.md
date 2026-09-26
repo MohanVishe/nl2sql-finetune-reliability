@@ -295,8 +295,13 @@ that held-out validation loss**.
   through the second pass, while blue keeps falling. That is **overfitting**: the model is
   memorising its practice questions instead of learning the skill. The step-200 checkpoint was
   kept, and the whole run is published as evidence.
-- There was no evaluation at step 0, so how much of the held-out improvement the first 50 steps
-  bought is not measured. Next run: log a step-0 evaluation.
+- **Step 0, measured afterwards.** The untrained model scores **0.2385** on the same validation
+  set, with the same loss and the same 4-bit setup (`scripts/eval_step0.py`,
+  `results/f1-training/step0-eval.json`). Training took it to 0.1473 at step 200: **38% lower**
+  (−0.0912). Most of that came early — step 50 was already at 0.1544, 92% of the way there. The
+  same script re-evaluates the saved step-200 adapter and gets 0.14731, the logged value to every
+  printed digit, so the two numbers are measured the same way. The fraction of answer tokens
+  predicted exactly rises from 93.1% to 95.6%.
 
 One visible change: the trained model writes queries in the dataset's house style — short
 aliases like `T1` and `T2`, one line, no trailing semicolon — where the untrained model writes
@@ -448,6 +453,7 @@ against the result files. Three of them need the data above and skip without it;
 | `tests/test_published_numbers.py` | Recomputes every count this README quotes from the result files. |
 | `scripts/prepare_data.py` | Builds the training and validation files, and a manifest of every decision. |
 | `scripts/train.py` | The QLoRA fine-tune, including a check that only the answer is trained on. |
+| `scripts/eval_step0.py` | Validation loss of the untrained model (step 0), measured exactly as training measured it. |
 | `scripts/merge.py` | Folds the adapter into the model. |
 | `scripts/to_gguf.py` | Converts and quantises via llama.cpp. |
 | `scripts/gguf_compare.py` | Compares two model files block by block and setting by setting. |
@@ -505,7 +511,6 @@ against the result files. Three of them need the data above and skip without it;
 
 - **Publish the adapter** (about 120 MB) on Hugging Face with the Qwen Research License, the
   NOTICE and a statement of modification, so F1 can be re-evaluated without retraining.
-- Log a step-0 validation evaluation, so the held-out improvement training bought is measured.
 - Commit the hypotheses and decision rule to the repository before training starts, so the
   pre-registration carries its own timestamp (see [EXPLAINED §7](docs/EXPLAINED.md)).
 - A larger question set, to resolve changes in the gap smaller than ±4.5 points.

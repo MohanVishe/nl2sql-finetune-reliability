@@ -158,3 +158,18 @@ def test_portable_paths(tmp_path, monkeypatch):
     assert portable("../other-repo/results/x.jsonl") == "other-repo/results/x.jsonl"
     assert portable("../gguf/model.gguf") == "../gguf/model.gguf"
     assert portable(tmp_path / "blob-sha256") == "blob-sha256"
+
+
+def test_step0_validation_loss():
+    """README/RUN-LOG: step 0 0.2385 -> step 200 0.1473, 38% lower, 92% of the drop by step 50;
+    and the script's re-evaluation of the saved adapter equals the logged best loss."""
+    step0 = json.loads((RESULTS / "f1-training" / "step0-eval.json").read_text(encoding="utf-8"))
+    training = json.loads((RESULTS / "f1-training" / "training.json").read_text(encoding="utf-8"))
+    evals = {h["step"]: h["eval_loss"] for h in training["log_history"] if "eval_loss" in h}
+    base, best = step0["step0"]["eval_loss"], training["best_eval_loss"]
+    assert step0["validation_examples"] == 367
+    assert step0["step0"]["lora_B_tensors_checked_zero"] == 252
+    assert round(base, 4) == 0.2385 and round(best, 4) == 0.1473
+    assert abs(step0["selected_adapter"]["eval_loss"] - best) < 1e-6
+    assert round(1 - best / base, 2) == 0.38
+    assert round((base - evals[50]) / (base - best), 2) == 0.92

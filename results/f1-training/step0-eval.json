@@ -1,0 +1,41 @@
+{
+  "validation_examples": 367,
+  "loss": "mean token cross-entropy over completion tokens only (completion_only_loss=True)",
+  "quantisation": "bitsandbytes 4-bit NF4, double quant, bf16 compute",
+  "max_length": 3072,
+  "eval_batch_size": 2,
+  "step0": {
+    "eval_loss": 0.23853760957717896,
+    "eval_model_preparation_time": 0.0291,
+    "eval_runtime": 65.4328,
+    "eval_samples_per_second": 5.609,
+    "eval_steps_per_second": 2.812,
+    "eval_entropy": 0.14984412685684537,
+    "eval_num_tokens": 0.0,
+    "eval_mean_token_accuracy": 0.9305287230273952,
+    "epoch": 0,
+    "seconds": 61.34392252000001,
+    "lora_B_tensors_checked_zero": 252
+  },
+  "selected_adapter": {
+    "eval_loss": 0.14730998873710632,
+    "eval_model_preparation_time": 0.0296,
+    "eval_runtime": 65.3451,
+    "eval_samples_per_second": 5.616,
+    "eval_steps_per_second": 2.816,
+    "eval_entropy": 0.13824752979385463,
+    "eval_num_tokens": 0.0,
+    "eval_mean_token_accuracy": 0.9562218451629514,
+    "epoch": 0,
+    "seconds": 61.28754424499999,
+    "adapter": "adapter"
+  },
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 3070",
+    "torch": "2.14.0+cu126",
+    "transformers": "5.17.0",
+    "trl": "1.13.0",
+    "peft": "0.21.0",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  }
+}

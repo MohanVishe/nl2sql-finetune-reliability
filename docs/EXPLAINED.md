@@ -185,8 +185,10 @@ step 200 (0.1473; steps 200–350 are all within 0.002 of it) and rises through 
 That divergence is **overfitting** — memorising instead of learning — and it decides which
 version to keep: the best checkpoint, step 200, was selected on held-out validation loss, not
 the final one. The whole run is published, because knowing where a recipe starts to hurt is
-part of the result. There was no evaluation at step 0, so the held-out improvement the first 50
-steps bought is not measured; the next run logs one.
+part of the result. Training did not log an evaluation at step 0, so it was measured afterwards
+with the same code path: the untrained model's held-out loss is 0.2385, and step 200's is
+0.1473, 38% lower. Step 50 was already at 0.1544, so almost all of the held-out gain came in the
+first 50 steps (800 examples).
 
 One change is visible without any statistics. Asked a question, the untrained model writes
 free-form SQL, while the fine-tuned model writes in the dataset's house style: short table

@@ -47,12 +47,33 @@ The run trained all 732 steps. Validation loss was evaluated every 50 steps; it 
 step 200 (steps 200–350 were all within 0.002 of it) and rose through epoch 2 while training
 loss kept falling. `load_best_model_at_end` then selected the step-200 checkpoint on held-out
 validation loss — checkpoint selection, not early stopping. The saved adapter was verified to be
-that checkpoint: 504 tensors, maximum absolute difference 0. No step-0 evaluation was logged, so
-the held-out improvement over the untrained model is not measured (step 50 already equals the
-final 0.1544); the next run logs one.
+that checkpoint: 504 tensors, maximum absolute difference 0. Training logged no step-0
+evaluation; it was measured afterwards (see "Step-0 validation loss" below).
 
 A 20-step smoke run preceded it. Its purpose was the loss mask: the supervised tokens were
 decoded and had to be exactly the fenced SQL answer and the end-of-turn marker.
+
+## Step-0 validation loss (2026-09-26)
+
+Measured after training, without retraining: `scripts/eval_step0.py` builds the same
+`SFTTrainer` as `train.py` (bitsandbytes 4-bit NF4 with double quantisation, bf16 compute,
+3,072-token limit, completion-only loss, eval batch 2) and calls `evaluate()` on the 367
+validation examples. Step 0 is the base model with a freshly initialised LoRA adapter; the
+script checks that all 252 `lora_B` matrices are zero, so the adapter adds nothing. As a check,
+it then re-evaluates the saved step-200 adapter. Same WSL2 environment as training, RTX 3070,
+about 65 s per evaluation. Result: `results/f1-training/step0-eval.json`.
+
+| | Validation loss | Answer tokens predicted exactly |
+|---|---:|---:|
+| Step 0 (untrained) | **0.2385** | 93.1% |
+| Step 50 (logged in training) | 0.1544 | — |
+| Step 200, selected (logged in training) | 0.1473 | — |
+| Step 200, re-evaluated by this script | 0.14731 (identical to the logged 0.147310) | 95.6% |
+
+Training lowered held-out loss by 0.0912, 38% of the starting value; 92% of that drop had
+happened by step 50. The evaluation is deterministic on a fixed split, so it has no sampling
+interval; the three validation databases are one draw, and a different held-out set would give
+different values.
 
 ## Building the models
 
