@@ -112,7 +112,8 @@ def main() -> int:
                             args.batch, args.max_length, peft_config)
     lora_b = [p for n, p in trainer.model.named_parameters() if "lora_B" in n]
     if not lora_b or any(p.abs().max().item() != 0 for p in lora_b):
-        raise SystemExit("error: fresh LoRA B matrices are not all zero; step 0 would not be the base")
+        raise SystemExit("error: fresh LoRA B matrices are not all zero; "
+                         "step 0 would not be the base model")
     started = time.perf_counter()
     step0 = trainer.evaluate()
     record["step0"] = {**step0, "seconds": time.perf_counter() - started,
