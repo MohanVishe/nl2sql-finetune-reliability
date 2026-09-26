@@ -1,8 +1,8 @@
 == 496 questions answered by every arm, k=10
 
    arm                      pass@k   pass^k      gap    flaky
-   local-3b-single          42.3%   18.8%   23.6%   23.6%
-   p3-f0-base               41.7%   19.0%   22.8%   22.8%
+   local-3b-single          42.5%   18.8%   23.8%   23.8%
+   p3-f0-base               41.9%   19.0%   23.0%   23.0%
 
 == p3-f0-base against local-3b-single, k=10
    pass@k     -0.6%   95% CI [ -2.6%,  +1.6%]  (interval includes zero)

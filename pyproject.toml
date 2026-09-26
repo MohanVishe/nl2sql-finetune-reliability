@@ -36,7 +36,7 @@ dev = ["pytest>=8.0", "ruff>=0.6"]
 Repository = "https://github.com/MohanVishe/nl2sql-finetune-reliability"
 
 [tool.uv.sources]
-nl2sql-reliability = { git = "https://github.com/MohanVishe/nl2sql-reliability", rev = "a0ea7fbff713860d2f1c44c039229b8849e5ca5d" }
+nl2sql-reliability = { git = "https://github.com/MohanVishe/nl2sql-reliability", rev = "ed25506a0d63622baf6e7bbeebea0a221cf484e5" }
 torch = { index = "pytorch-cu126" }
 
 [[tool.uv.index]]

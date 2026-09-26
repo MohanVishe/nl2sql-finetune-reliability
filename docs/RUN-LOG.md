@@ -11,7 +11,7 @@ the numbers rather than take them on trust. Newest first.
 | Training | WSL2 Ubuntu 24.04, Python 3.12, torch 2.14.0+cu126, transformers 5.17.0, trl 1.13.0, peft 0.21.0, bitsandbytes 0.50.2 |
 | Serving and evaluation | Windows 11, Ollama 0.34.2 |
 | Conversion | llama.cpp release b11042 (converter at commit `ec92815`) |
-| Harness | [`nl2sql-reliability`](https://github.com/MohanVishe/nl2sql-reliability) at `a0ea7fb`, unchanged |
+| Harness | [`nl2sql-reliability`](https://github.com/MohanVishe/nl2sql-reliability): generated at `a0ea7fb`, re-scored at `ed25506` (scorer fixes only, see below), used unchanged |
 
 Training runs in WSL2 because Windows Smart App Control (a security feature that blocks
 unsigned programs) refuses to load PyTorch's own libraries and llama.cpp's quantiser on this
@@ -92,11 +92,13 @@ single turn. Two questions are excluded from scoring because their reference que
 
 | Arm | Attempts | Result |
 |---|---|---|
-| F0 (`p3-f0-base`) | 4,980 (4,960 scored) | Complete. pass@10 41.7%, pass^10 19.0%, gap 22.8% |
+| F0 (`p3-f0-base`) | 4,980 (4,960 scored) | Complete. pass@10 41.9%, pass^10 19.0%, gap 23.0% |
 | F1 (`p3-f1-qlora`) | 4,980 (4,960 scored) | Complete. pass@10 46.2%, pass^10 23.4%, gap 22.8% |
 
-F0 against the published baseline (`results/f0-vs-c.txt`): pass@10 −0.6 [−2.6, +1.6],
-pass^10 +0.2 [−1.6, +2.2], gap −0.8 [−3.6, +2.0]. All intervals include zero, so neither this
+F0 against the published baseline (`results/summary-f0-vs-c.json`): pass@10 −0.6 [−2.8, +1.6],
+pass^10 +0.2 [−1.6, +2.0], gap −0.8 [−3.6, +2.0]. The earlier project's own `compare_arms.py`
+(`results/f0-vs-c.txt`, a different resampling seed) agrees: [−2.6, +1.6], [−1.6, +2.2],
+[−3.6, +2.0]. All intervals include zero, so neither this
 pipeline nor the Ollama update (0.34.1 → 0.34.2, between the earlier study and this one; both
 arms here ran on 0.34.2) moves the numbers.
 
@@ -109,19 +111,43 @@ timestamps in the result files and the Windows event log. Both result files were
 the final attempt: 4,980 rows each, 4,980 unique `(arm, question, attempt)` keys, no duplicates, no
 unparsable lines, and 20 `gold_failed` rows each — the two excluded questions × ten attempts.
 
-F1 against F0 (`results/summary.json`): pass@10 +4.4 [+0.6, +8.3], pass^10 +4.4 [+1.0, +7.9],
-gap +0.0 [−4.6, +4.4].
+F1 against F0 (`results/summary.json`): pass@10 +4.2 [+0.4, +8.1], pass^10 +4.4 [+1.0, +7.9],
+gap −0.2 [−4.8, +4.4].
 
 Attempts were also split by how they failed (`results/failure-modes.json`, seed 0, same paired
 bootstrap): crashes 38.0% → 18.2% [−23.2, −16.5], silent wrong answers 32.3% → 46.9%
 [+11.2, +18.0], right 29.7% → 34.9% [+2.2, +8.3]. Questions by consistency: never/flaky/always
-is 289/113/94 for F0, 267/113/116 for F1, 249/68/179 for the prompted 7B.
+is 288/114/94 for F0, 267/113/116 for F1, 248/69/179 for the prompted 7B.
 
 F1 against the published prompted 7B (`results/summary-f1-vs-7b.json`), P1 arm A, read from
-`local-7b-single.jsonl` and never re-run: pass@10 −3.6 [−7.7, +0.6], pass^10 −12.7
-[−16.7, −8.5], gap +9.1 [+4.4, +13.7]. Single-attempt accuracy (the `correct` rate,
-`results/failure-modes.json`): −8.0 [−11.6, −4.3]. This comparison spans Ollama 0.34.1 (the 7B)
+`local-7b-single.jsonl` and never re-run: pass@10 −3.8 [−7.9, +0.4], pass^10 −12.7
+[−16.7, −8.5], gap +8.9 [+4.2, +13.5]. Single-attempt accuracy (the `correct` rate,
+`results/failure-modes.json`): −8.1 [−11.6, −4.4]. This comparison spans Ollama 0.34.1 (the 7B)
 and 0.34.2 (F1); F0 is the control that licenses it.
+
+## Re-scoring (2026-09-26)
+
+The earlier project fixed two scorer bugs (its commit `66a8dfd`, pinned here at `ed25506`):
+row order is now enforced only when the reference query has a **top-level** `ORDER BY` (one in
+a subquery or window used to force it too), and empty or comment-only SQL counts as an
+execution error instead of an empty result. Both arms were re-scored from their recorded SQL
+with its `scripts/rescore.py`, which re-executes every attempt and every reference query and
+refuses to write if any attempt's execution status would change. None did; nothing was
+generated again.
+
+| Arm | Verdicts changed |
+|---|---|
+| F0 | 1 — question 728, attempt 3: wrong → right (`exact column order matches`) |
+| F1 | 0 |
+
+The earlier project's published 7B and 3B attempts were re-scored the same way on its side
+(17 verdicts, all on question 728). Every report and chart here was regenerated from the
+re-scored files. What moved: F0 pass@10 41.7 → 41.9 and gap 22.8 → 23.0; F1 − F0 pass@10
++4.4 → +4.2 and gap +0.0 → −0.2 [−4.8, +4.4]; F0's flaky band 113 → 114; the 7B pass@10
+49.8 → 50.0 and pass@1 42.9 → 43.0, so F1 − 7B pass@10 −3.6 → −3.8 [−7.9, +0.4] and pass@1
+−8.0 → −8.1 [−11.6, −4.4]. pass^10 did not change for any arm. Every conclusion stands: the gap
+change still includes zero, the capability rise still excludes it, and pass@10 against the 7B
+still cannot be separated. `results/<arm>.run.json` records the re-score.
 
 ## Incidents
 

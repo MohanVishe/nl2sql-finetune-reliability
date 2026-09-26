@@ -266,10 +266,13 @@ def consistency_chart(report: dict, out: Path) -> None:
             ("flaky (right some of the time)", c["flaky"], TREAT),
             ("right every time", c["always"], GOOD),
         ]))
+    flaky = {arm: c["flaky"] for arm, c in report["consistency"].items()}
+    note = (f"The flaky middle: {flaky['baseline']} questions before fine-tuning, "
+            f"{flaky['treatment']} after.")
+    if "reference" in flaky:
+        note += f" The 7B's is {flaky['reference']}."
     _stacked(rows, title="Questions by how many of the ten attempts were right",
-             note="The flaky middle is identical before and after fine-tuning: 113 questions. "
-                  "The 7B's is 68.",
-             unit="count", out=out)
+             note=note, unit="count", out=out)
 
 
 def main() -> int:

@@ -2,11 +2,11 @@
 <title>How each attempt ended (496 questions x 10 attempts)</title>
 <text x="20.0" y="26.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#8b93a1" text-anchor="start" font-weight="700">How each attempt ended (496 questions x 10 attempts)</text>
 <text x="120.0" y="72.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="600">F0  untrained</text>
-<rect x="132.0" y="52" width="178.7" height="28" fill="#3fa06a" fill-opacity="0.85" />
-<text x="221.3" y="71.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">30%</text>
-<rect x="310.7" y="52" width="228.7" height="28" fill="#e8833a" fill-opacity="0.85" />
-<text x="425.0" y="71.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">38%</text>
-<rect x="539.3" y="52" width="194.7" height="28" fill="#d1544f" fill-opacity="0.85" />
+<rect x="132.0" y="52" width="178.8" height="28" fill="#3fa06a" fill-opacity="0.85" />
+<text x="221.4" y="71.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">30%</text>
+<rect x="310.8" y="52" width="228.7" height="28" fill="#e8833a" fill-opacity="0.85" />
+<text x="425.1" y="71.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">38%</text>
+<rect x="539.4" y="52" width="194.6" height="28" fill="#d1544f" fill-opacity="0.85" />
 <text x="636.7" y="71.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">32%</text>
 <text x="120.0" y="126.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="600">F1  fine-tuned</text>
 <rect x="132.0" y="106" width="210.3" height="28" fill="#3fa06a" fill-opacity="0.85" />
@@ -16,17 +16,17 @@
 <rect x="451.9" y="106" width="282.1" height="28" fill="#d1544f" fill-opacity="0.85" />
 <text x="593.0" y="125.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">47%</text>
 <text x="120.0" y="180.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="end" font-weight="600">7B  prompted</text>
-<rect x="132.0" y="160" width="258.5" height="28" fill="#3fa06a" fill-opacity="0.85" />
-<text x="261.3" y="179.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">43%</text>
-<rect x="390.5" y="160" width="97.1" height="28" fill="#e8833a" fill-opacity="0.85" />
-<text x="439.1" y="179.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">16%</text>
-<rect x="487.6" y="160" width="246.4" height="28" fill="#d1544f" fill-opacity="0.85" />
-<text x="610.8" y="179.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">41%</text>
+<rect x="132.0" y="160" width="259.0" height="28" fill="#3fa06a" fill-opacity="0.85" />
+<text x="261.5" y="179.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">43%</text>
+<rect x="391.0" y="160" width="97.1" height="28" fill="#e8833a" fill-opacity="0.85" />
+<text x="439.6" y="179.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">16%</text>
+<rect x="488.1" y="160" width="245.9" height="28" fill="#d1544f" fill-opacity="0.85" />
+<text x="611.1" y="179.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">41%</text>
 <rect x="132" y="219" width="11" height="11" rx="2" fill="#3fa06a" fill-opacity="0.85" />
 <text x="149.0" y="228.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">right</text>
 <rect x="187.0" y="219" width="11" height="11" rx="2" fill="#e8833a" fill-opacity="0.85" />
 <text x="204.0" y="228.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">crashed (visible failure)</text>
 <rect x="382.0" y="219" width="11" height="11" rx="2" fill="#d1544f" fill-opacity="0.85" />
 <text x="399.0" y="228.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">ran, wrong rows (silent failure)</text>
-<text x="20.0" y="260.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">F1 against F0: crashes fell 19.8 points; right answers rose 5.3, silent wrong answers 14.5.</text>
+<text x="20.0" y="260.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#8b93a1" text-anchor="start" font-weight="normal">F1 against F0: crashes fell 19.8 points; right answers rose 5.2, silent wrong answers 14.5.</text>
 </svg>

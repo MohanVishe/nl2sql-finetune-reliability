@@ -52,9 +52,9 @@ def test_rows_published_and_scored():
 def test_questions_that_changed(arms):
     f0, f1 = arms
     assert len(f0) == len(f1) == 496
-    assert sum(band(f0[q]) != band(f1[q]) for q in f0) == 150
+    assert sum(band(f0[q]) != band(f1[q]) for q in f0) == 151
     assert sum(f1[q] > f0[q] for q in f0) == 116
-    assert sum(f1[q] < f0[q] for q in f0) == 74
+    assert sum(f1[q] < f0[q] for q in f0) == 75
 
 
 def test_which_questions_moved_table(arms):
@@ -74,17 +74,31 @@ def test_which_questions_moved_table(arms):
         "partly right both, count moved": moves[("partly", "partly", False)],
         "partly right both, unchanged": moves[("partly", "partly", True)],
     }
-    assert list(table.values()) == [67, 231, 49, 27, 46, 28, 40, 8]
+    assert list(table.values()) == [67, 230, 49, 27, 46, 29, 40, 8]
     assert sum(table.values()) == 496
 
 
 def test_flaky_band_is_the_gap(arms):
     # At k = n the gap is, by definition, the share of questions right on 1-9 of 10 attempts.
     summary = json.loads((RESULTS / "summary.json").read_text(encoding="utf-8"))
-    for arm, counts in zip(("baseline", "treatment"), arms, strict=True):
+    for arm, counts, expected in zip(("baseline", "treatment"), arms, (114, 113), strict=True):
         partly = sum(band(c) == "partly" for c in counts.values())
-        assert partly == 113
+        assert partly == expected
         assert summary["curves"][arm][-1]["gap"] == pytest.approx(partly / 496)
+
+
+def test_fine_tuning_headline():
+    summary = json.loads((RESULTS / "summary.json").read_text(encoding="utf-8"))
+    rounded = {k: [round(v[f] * 100, 1) for f in ("delta", "ci_low", "ci_high")]
+               for k, v in summary["differences_at_full_k"].items()}
+    assert rounded == {"pass_at_k": [4.2, 0.4, 8.1], "pass_hat_k": [4.4, 1.0, 7.9],
+                       "gap": [-0.2, -4.8, 4.4]}
+    at_least_once_gained = sum(1 for m in summary["moved_questions"]
+                               if m["baseline"] == 0 and m["treatment"] > 0)
+    at_least_once_lost = sum(1 for m in summary["moved_questions"]
+                             if m["baseline"] > 0 and m["treatment"] == 0)
+    assert (at_least_once_gained, at_least_once_lost) == (58, 37)
+    assert (summary["moved"]["became_solid"], summary["moved"]["lost_solid"]) == (49, 27)
 
 
 def test_seven_b_comparison():
@@ -95,14 +109,14 @@ def test_seven_b_comparison():
     assert (always_7b - always_f1) / always_7b == pytest.approx(0.352, abs=0.001)  # a third
 
     single = report["differences"]["treatment_minus_reference"]["correct"]
-    assert round(single["delta"] * 100, 1) == -8.0
+    assert round(single["delta"] * 100, 1) == -8.1
     assert round(single["ci_low"] * 100, 1) == -11.6
-    assert round(single["ci_high"] * 100, 1) == -4.3
+    assert round(single["ci_high"] * 100, 1) == -4.4
 
     crossover = json.loads((RESULTS / "summary-f1-vs-7b.json").read_text(encoding="utf-8"))
     rounded = {k: [round(v[f] * 100, 1) for f in ("delta", "ci_low", "ci_high")]
                for k, v in crossover["differences_at_full_k"].items()}
-    assert rounded["pass_at_k"] == [-3.6, -7.7, 0.6]
+    assert rounded["pass_at_k"] == [-3.8, -7.9, 0.4]
     assert rounded["pass_hat_k"] == [-12.7, -16.7, -8.5]
 
 

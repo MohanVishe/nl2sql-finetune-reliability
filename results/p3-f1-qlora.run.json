@@ -27,5 +27,13 @@
   },
   "started": "2026-09-19T16:19:28+00:00",
   "finished": "2026-09-20T13:58:06+00:00",
-  "exit_code": 0
+  "exit_code": 0,
+  "rescored": {
+    "date": "2026-09-26",
+    "p1_commit": "ed25506a0d63622baf6e7bbeebea0a221cf484e5",
+    "command": "nl2sql-reliability/scripts/rescore.py --write",
+    "why": "P1 scorer fixes: row order enforced only for a top-level ORDER BY; empty or comment-only SQL is an execution error",
+    "execution_status_changes": 0,
+    "verdicts_changed": []
+  }
 }

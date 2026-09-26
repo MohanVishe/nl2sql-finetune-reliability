@@ -33,7 +33,7 @@ answer repeats: they report one attempt, or the best of several, because benchma
 around research, where a human reads the output.
 
 The distance between the two is the **reliability gap**. For the untrained model measured here
-it is over 20 points: a benchmark score of 41.7% comes with only 19.0% of questions answered
+it is over 20 points: a benchmark score of 41.9% comes with only 19.0% of questions answered
 correctly every single time.
 
 The estimators themselves are not new. pass@k is standard in code generation (Chen et al. 2021),
@@ -243,34 +243,36 @@ All three arms, on the 496 questions every arm answered, ten attempts each:
 
 | arm | pass@10 | pass^10 | gap |
 |---|---|---|---|
-| F0 — untrained, through this pipeline | 41.7% | 19.0% | 22.8% |
+| F0 — untrained, through this pipeline | 41.9% | 19.0% | 23.0% |
 | F1 — fine-tuned | 46.2% | 23.4% | 22.8% |
-| published baseline (control, for reference) | 42.3% | 18.8% | 23.6% |
+| published baseline (control, for reference) | 42.5% | 18.8% | 23.8% |
 
 Paired differences, F1 − F0, at k = 10, with 95% intervals from 10,000 bootstrap resamples of
 the 496 questions:
 
 | quantity | change | 95% interval | reading |
 |---|---|---|---|
-| capability (pass@10) | +4.4 | [+0.6, +8.3] | excludes zero — a real rise |
+| capability (pass@10) | +4.2 | [+0.4, +8.1] | excludes zero — a real rise |
 | reliability (pass^10) | +4.4 | [+1.0, +7.9] | excludes zero — a real rise |
-| **reliability gap** | **+0.0** | **[−4.6, +4.4]** | includes zero — no detectable change |
+| **reliability gap** | **−0.2** | **[−4.8, +4.4]** | includes zero — no detectable change |
 
-### The zero is exact, and that is a coincidence
+### The −0.2 is one question
 
 At k equal to the number of attempts collected, the two estimators stop being estimates and
 become counts: pass@10 is just "this question was right at least once", pass^10 is "this
 question was right all ten times". So each difference is a whole number of questions divided
 by 496.
 
-- Right at least once: **58 questions gained it, 36 lost it — net +22.**
+- Right at least once: **58 questions gained it, 37 lost it — net +21.**
 - Right every time: **49 questions gained it, 27 lost it — net +22.**
 
-Both net counts are 22, and 22/496 = 4.4355%. The two rises are therefore identical to the
-fourth decimal, and the gap difference is 0.0000 by construction rather than by any cancelling
-mechanism. It is a nice number and it means nothing on its own.
+The net counts are 21 and 22, so the gap moved by one question out of 496, −0.2 points: the
+smallest step a gap measured this way can take. (Before the earlier project corrected its
+scorer, both counts were 22 and the change was exactly zero; one F0 attempt on question 728 was
+re-scored right, which is the whole difference. The run log has the details.) Either way the
+point estimate means little on its own.
 
-What carries meaning is the interval around it: **[−4.6, +4.4]**. A study of 496 questions
+What carries meaning is the interval around it: **[−4.8, +4.4]**. A study of 496 questions
 cannot see a change in the gap smaller than roughly four and a half points. Had fine-tuning
 shaved three points off the flakiness, this design would have reported the same honest "no
 detectable change". The correct claim is *this study did not detect a change*, and the correct
@@ -295,10 +297,10 @@ Splitting the same 9,920 attempts three ways:
 |---|---|---|---|
 | F0 — untrained | 29.7% | 38.0% | 32.3% |
 | F1 — fine-tuned | 34.9% | 18.2% | 46.9% |
-| difference, paired | +5.3 [+2.2, +8.3] | −19.8 [−23.2, −16.5] | +14.5 [+11.2, +18.0] |
+| difference, paired | +5.2 [+2.2, +8.3] | −19.8 [−23.2, −16.5] | +14.5 [+11.2, +18.0] |
 
 Every interval excludes zero. Follow the arithmetic: crashing queries fell by **19.8 points**,
-right answers rose by **5.3 points**, and queries that execute cleanly and return the wrong data
+right answers rose by **5.2 points**, and queries that execute cleanly and return the wrong data
 rose by **14.5 points**. The attempts are independent samples, so no single query is being
 followed from one model to the other; these are shifts in rates. But in net terms, of the
 ground crashes gave up, about a quarter went to right answers and three quarters to silent
@@ -311,7 +313,7 @@ the model what a valid query *looks like* — real column names, sane joins, the
 style — far faster than it taught the model to answer the question in front of it. The model
 became fluent before it became correct.
 
-For a leaderboard, that is a clean win: +4.4 points. For a system, it is a trade of visible
+For a leaderboard, that is a clean win: +4.2 points. For a system, it is a trade of visible
 failure for invisible failure at about three to one. A team measuring "SQL error rate" — an
 entirely sensible thing to monitor — would have watched that metric halve and concluded the
 fine-tune was a success, while the rate of confidently wrong answers reaching users rose by
@@ -319,31 +321,31 @@ fourteen points.
 
 ### Where the flakiness lives
 
-The reliability gap is an average, and averages hide shape. A 22.8-point gap could mean every
+The reliability gap is an average, and averages hide shape. A 23-point gap could mean every
 question is a coin flip, or it could mean nearly everything is settled and a stubborn minority
 is unstable. Those two worlds need opposite engineering, so it is worth knowing which one this
 is. Counting questions by how many of their ten attempts succeeded answers it:
 
 | | never right | flaky | right every time |
 |---|---|---|---|
-| F0 — untrained | 289 | **113** | 94 |
+| F0 — untrained | 288 | **114** | 94 |
 | F1 — fine-tuned | 267 | **113** | 116 |
-| prompted 7B | 249 | **68** | 179 |
+| prompted 7B | 248 | **69** | 179 |
 
 Most questions are settled: the model either always gets them or never does. The gap is produced
-by a middle band of 113 questions, about a fifth of the benchmark (22.8%).
+by a middle band of 113–114 questions, nearly a quarter of the benchmark (23%).
 
-That band is the same size before and after fine-tuning — 113 questions both times — and this
-is not a second finding alongside the zero; it is the same one. At k = 10, the gap *is* the
-share of questions that are right sometimes but not always, so "the band stayed at 113" and
-"Δgap = 0" are one fact stated twice. What the counts add is shape and churn: 150 of the 496
-questions changed category (190 changed how many of their ten attempts were right), 58 became
-reachable that never were, 36 stopped being reachable, 37 went from flaky to rock-solid and 19
+That band is almost the same size before and after fine-tuning — 114 questions, then 113 — and
+this is not a second finding alongside the gap result; it is the same one. At k = 10, the gap
+*is* the share of questions that are right sometimes but not always, so "the band went from 114
+to 113" and "Δgap = −1/496 = −0.2 points" are one fact stated twice. What the counts add is
+shape and churn: 151 of the 496 questions changed category (191 changed how many of their ten
+attempts were right), 58 became reachable that never were, 37 stopped being reachable, 37 went from flaky to rock-solid and 19
 went the other way. Fine-tuning at this scale moved questions **across** the distribution
 without compressing the middle of it.
 
 The prompted 7B — instruction-tuned by its makers, with no task-specific fine-tuning — has a
-middle band of 68. In this comparison the larger model was steadier; a single model pair cannot
+middle band of 69. In this comparison the larger model was steadier; a single model pair cannot
 say whether its size is the cause.
 
 ### The prediction that was written down first, and how it did
@@ -358,9 +360,10 @@ commit carries the date.
 - **H-diversity** — fine-tuning narrows output variety, so the model agrees with itself more.
   pass^10 rises more than pass@10, **the gap narrows**.
 
-**The stated leaning was H-diversity**, on the reasoning that the 3B's unusually wide 23.6-point
-gap in the earlier project looked like inconsistency rather than inability — the kind of spread
-supervised fine-tuning has been reported to narrow (Li et al. 2024; Klypa et al. 2026).
+**The stated leaning was H-diversity**, on the reasoning that the 3B's unusually wide gap in
+the earlier project (23.6 points as published then, 23.8 after its scorer fix) looked like
+inconsistency rather than inability — the kind of spread supervised fine-tuning has been
+reported to narrow (Li et al. 2024; Klypa et al. 2026).
 H-coverage draws on work finding that training can move what a model can solve and its
 single-attempt accuracy by different amounts (Yue et al. 2025). The decision rule, fixed in
 advance: a 95% interval on Δgap entirely below zero supports H-diversity, entirely above
@@ -387,19 +390,19 @@ questions, so the comparison needs no new compute — that arm was never re-run,
 
 | | pass@10 | pass@1 (single attempt) | pass^10 | gap |
 |---|---|---|---|---|
-| prompted 7B | 49.8% | 42.9% | 36.1% | 13.7% |
+| prompted 7B | 50.0% | 43.0% | 36.1% | 13.9% |
 | fine-tuned 3B | 46.2% | 34.9% | 23.4% | 22.8% |
-| difference, paired | −3.6 [−7.7, +0.6] | −8.0 [−11.6, −4.3] | −12.7 [−16.7, −8.5] | +9.1 [+4.4, +13.7] |
+| difference, paired | −3.8 [−7.9, +0.4] | −8.1 [−11.6, −4.4] | −12.7 [−16.7, −8.5] | +8.9 [+4.2, +13.5] |
 
 On pass@10 the two are **not distinguishable by this study** — which is not the same as equal:
 the interval allows a deficit of nearly eight points, and the same "not detected" reading
 applies here as to the gap. On single-attempt accuracy, the number a one-attempt-per-question
-evaluation reports, the 3B is **8.0 points behind**. On pass^10 it is **12.7 points behind**.
+evaluation reports, the 3B is **8.1 points behind**. On pass^10 it is **12.7 points behind**.
 Neither of those intervals comes near zero. Per question: **92 questions the 7B got right all
 ten times, the fine-tuned 3B does not**, against 29 in the other direction. The 7B is right every
 time on 179 questions and the fine-tuned 3B on 116 — about a third fewer.
 
-This is the most directly actionable thing here. The deficit widens from 3.6 points to 8.0 to
+This is the most directly actionable thing here. The deficit widens from 3.8 points to 8.1 to
 12.7 as the measure moves from "right at least once" to "right on one try" to "right every
 time". A team choosing between these two models on pass@10 would see the smallest difference of
 the three; the closer the use case is to "must be right every time", the larger the shortfall.
@@ -427,11 +430,11 @@ spirit: (3) is the outcome a product team would be buying when they commission a
 evidence they would get it. They would get a model that is better across the board and exactly
 as flaky, question for question, as the one they started with.
 
-The per-question counts say the same thing from another angle. 190 of 496 questions moved at
-all; 116 improved and 74 worsened. Fine-tuning is not a monotone improvement applied to a model,
+The per-question counts say the same thing from another angle. 191 of 496 questions moved at
+all; 116 improved and 75 worsened. Fine-tuning is not a monotone improvement applied to a model,
 it is a **redistribution** with a positive mean — 27 questions that the base model got right
 all ten times stopped being dependable after training. A team shipping F1 over F0 gains on
-balance and still regresses 74 questions, which no single headline number would have told them.
+balance and still regresses 75 questions, which no single headline number would have told them.
 
 ### What it does not mean
 
@@ -441,7 +444,7 @@ balance and still regresses 74 questions, which no single headline number would 
 - **Not "the gap is constant".** It was not detectably changed *by this intervention*. A
   different intervention — decoding changes, self-consistency, verification, retrieval — is
   untested here and attacks the problem from a different direction.
-- **Not a ceiling claim.** 231 of the 496 questions were answered wrong by both models on all
+- **Not a ceiling claim.** 230 of the 496 questions were answered wrong by both models on all
   twenty attempts between them. Those are not flaky, they are out of reach, and they hold both
   headline numbers down in a way that has nothing to do with reliability.
 

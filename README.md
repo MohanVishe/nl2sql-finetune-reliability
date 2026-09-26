@@ -5,25 +5,28 @@
 trains a small AI model on database questions and measures whether the training helps the
 second question as much as the first.
 
-**The answer: it helps both, by the same amount, and so it closes nothing.** Fine-tuning lifted
-capability by 4.4 points and reliability by 4.4 points, leaving the distance between them — the
-flakiness a product actually feels — unchanged, at 22.8%. Training made the model better. It did
-not make it more dependable.
+**The answer: it helps both by about the same amount, and closes none of the gap.** Fine-tuning
+lifted capability by 4.2 points and reliability by 4.4 points, leaving the distance between them
+— the flakiness a product actually feels — where it was: 23.0% before, 22.8% after, a change of
+−0.2 points [−4.8, +4.4] that this study cannot tell from zero. Training made the model better.
+It did not make it detectably more dependable.
 
 **And what the training did buy, which no benchmark score shows:** queries the database
-outright rejects fell by 19.8 points of all attempts. Right answers rose by 5.3 points; queries
+outright rejects fell by 19.8 points of all attempts. Right answers rose by 5.2 points; queries
 that run perfectly and return the wrong rows rose by 14.5. In net terms, fine-tuning traded
 failures you can see for failures you cannot, roughly three to one.
 
 **Against a model more than twice its size, the shortfall grows with the demand for
 repeatability.** On the usual benchmark score (pass@10) this study cannot separate the fine-tuned
-3B from a prompted 7B: −3.6 points [−7.7, +0.6]. On single-attempt accuracy it is **8.0 points
-behind** [−11.6, −4.3], and on right-all-ten-times (pass^10) **12.7 points behind**
+3B from a prompted 7B: −3.8 points [−7.9, +0.4]. On single-attempt accuracy it is **8.1 points
+behind** [−11.6, −4.4], and on right-all-ten-times (pass^10) **12.7 points behind**
 [−16.7, −8.5]. The 7B is right every time on 179 questions, the fine-tuned 3B on 116 — about a
 third fewer. A comparison made on pass@10 alone would understate the difference the most.
 
 Everything here is measured on one computer, with free and open tools, and every number can be
 reproduced from the files in this repository plus the earlier project's published attempts.
+All attempts are scored with the earlier project's corrected scorer (re-scored 2026-09-26; one
+F0 attempt changed verdict — see [the run log](docs/RUN-LOG.md#re-scoring-2026-09-26)).
 
 Want the full story, including the four ways the setup nearly fooled us? Read
 [the long version](docs/EXPLAINED.md). Want to know what was actually run and what crashed?
@@ -98,9 +101,9 @@ does not reproduce the earlier published result, the pipeline is what changed, n
 
 | | capability (pass@10) | reliability (pass^10) | gap |
 |---|---|---|---|
-| Earlier published baseline | 42.3% | 18.8% | 23.6% |
-| F0 (this project's pipeline) | 41.7% | 19.0% | 22.8% |
-| Difference (95% confidence) | −0.6 [−2.6, +1.6] | +0.2 [−1.6, +2.2] | −0.8 [−3.6, +2.0] |
+| Earlier published baseline | 42.5% | 18.8% | 23.8% |
+| F0 (this project's pipeline) | 41.9% | 19.0% | 23.0% |
+| Difference (95% confidence) | −0.6 [−2.8, +1.6] | +0.2 [−1.6, +2.0] | −0.8 [−3.6, +2.0] |
 
 Every difference is small enough to be chance. Even better: **all 434 tensors** (the internal
 weight blocks) in F0's model file are **byte-identical** to the published model's, and every
@@ -116,36 +119,35 @@ whole result in one table:
 
 | | capability (pass@10) | reliability (pass^10) | reliability gap |
 |---|---|---|---|
-| **F0** — before training | 41.7% | 19.0% | 22.8% |
+| **F0** — before training | 41.9% | 19.0% | 23.0% |
 | **F1** — after training | 46.2% | 23.4% | 22.8% |
-| **Change** (95% confidence) | **+4.4** [+0.6, +8.3] | **+4.4** [+1.0, +7.9] | **+0.0** [−4.6, +4.4] |
+| **Change** (95% confidence) | **+4.2** [+0.4, +8.1] | **+4.4** [+1.0, +7.9] | **−0.2** [−4.8, +4.4] |
 
 ![pass@k and pass^k for both models](docs/images/passk-curves.svg)
 
 **Training worked.** The model got better at the task, and not only on the forgiving "at least
-one of ten" measure. Capability and reliability both rose by **4.4 points**, and both intervals
-stay clear of zero, so neither rise is chance.
+one of ten" measure. Capability rose by **4.2 points** and reliability by **4.4**, and both
+intervals stay clear of zero, so neither rise is chance.
 
 **Training did not buy dependability.** The distance between the two — the flakiness — did not
-move. In the chart, both of F1's lines sit above F0's, and they stay exactly as far apart as
-before.
+detectably move. In the chart, both of F1's lines sit above F0's, and they stay about as far
+apart as before.
 
 That is the answer to the question this project set out to ask. Fine-tuning lifted the whole
 distribution at once: more questions became right at least once and more became right every
-time, by the same amount, while the band of questions the model is flaky on stayed the same
-size — though, as below, not the same questions. What training did **not** do was take what the
+time, by about the same amount, while the band of questions the model is flaky on stayed
+almost the same size (114, then 113) — though, as below, not the same questions. What training did **not** do was take what the
 model already half-knew and make it steady. In this study, fine-tuning on 5,851 examples was
 not, by itself, the lever for a model that answers the same question the same way every time.
 
-One caution about that headline zero. It is exactly zero, and that is a coincidence: 22 more
-questions became right-at-least-once (58 gained it, 36 lost it), and 22 more became
-right-every-time (49 gained, 27 lost). Two different counts, both landing on 22, and 22 out of
-496 is 4.4355% either way — so the two rises cancel to the fourth decimal. Nothing deeper than
-that is going on.
+One caution about how small that −0.2 is. At k = 10 every change is a whole number of
+questions out of 496: 21 more questions became right-at-least-once (58 gained it, 37 lost it),
+and 22 more became right-every-time (49 gained, 27 lost). The gap moved by one question, the
+smallest step it can take. Nothing deeper than that is going on.
 
 The honest reading is therefore **"no detectable change"**, not "provably identical". The
-interval runs from −4.6 to +4.4, so a real change of a few points either way would not have
-been detected by a study this size. The interval is the finding; the zero is arithmetic.
+interval runs from −4.8 to +4.4, so a real change of a few points either way would not have
+been detected by a study this size. The interval is the finding, not the point estimate.
 
 ### What training actually bought: fewer crashes, more confident mistakes
 
@@ -164,10 +166,10 @@ ways, and the difference between the last two matters enormously to anyone shipp
 |---|---|---|---|
 | **F0** — before training | 29.7% | 38.0% | 32.3% |
 | **F1** — after training | 34.9% | 18.2% | 46.9% |
-| **Change** (95% confidence) | **+5.3** [+2.2, +8.3] | **−19.8** [−23.2, −16.5] | **+14.5** [+11.2, +18.0] |
+| **Change** (95% confidence) | **+5.2** [+2.2, +8.3] | **−19.8** [−23.2, −16.5] | **+14.5** [+11.2, +18.0] |
 
 All three intervals exclude zero, so all three moves are real. And the arithmetic is
-uncomfortable: **crashes fell 19.8 points; right answers rose 5.3; silent wrong answers rose
+uncomfortable: **crashes fell 19.8 points; right answers rose 5.2; silent wrong answers rose
 14.5.** These are shifts in rates across independent attempts, not the same queries tracked
 from one model to the other — but in net terms, for every point of crashes that turned into a
 right answer, nearly three turned into a silent wrong one.
@@ -175,7 +177,7 @@ right answer, nearly three turned into a silent wrong one.
 That is what training on 5,851 examples bought at this scale. The pattern fits a model that
 learned the *form* of a valid query — the right table names, the right joins, the dataset's
 house style — faster than it learned to answer the question (one caveat on the answer key is in
-§8). Judged on the benchmark, this is a clean 4.4-point win.
+§8). Judged on the benchmark, this is a clean 4-point win.
 Judged as a product change, it moved failures from a pile you can monitor into a pile you
 cannot. **A team watching its error-rate dashboard would have seen that dashboard improve by
 half while the thing it is meant to protect against got worse.**
@@ -190,21 +192,22 @@ Counting questions by how many of their ten attempts succeeded tells you which:
 
 | | never right | flaky (sometimes) | right every time |
 |---|---|---|---|
-| **F0** — before training | 289 | **113** | 94 |
+| **F0** — before training | 288 | **114** | 94 |
 | **F1** — after training | 267 | **113** | 116 |
-| Prompted 7B | 249 | **68** | 179 |
+| Prompted 7B | 248 | **69** | 179 |
 
-The unstable middle is **113 questions before fine-tuning and 113 after.** Fine-tuning churned
-the deck thoroughly — 150 of 496 questions changed category, and 190 changed how many of their
-ten attempts were right — and left the size of the middle band where it was. The 7B is unstable
-on 68.
+The unstable middle is **114 questions before fine-tuning and 113 after.** Fine-tuning churned
+the deck thoroughly — 151 of 496 questions changed category, and 191 changed how many of their
+ten attempts were right — and left the size of the middle band almost where it was. The 7B is
+unstable on 69.
 
-That 113 = 113 is not a separate explanation of the headline zero; it is the same fact. At
-k = 10 the gap *is* the share of questions that are sometimes right (113 / 496 = 22.8%), so an
-unchanged band and an unchanged gap are one observation stated twice. What the histogram adds
+That 114 → 113 is not a separate explanation of the gap result; it is the same fact. At k = 10
+the gap *is* the share of questions that are sometimes right (114 / 496 = 23.0%, then
+113 / 496 = 22.8%), so a band that barely moved and a gap that barely moved are one observation
+stated twice. What the histogram adds
 is shape: the gap comes from a minority band of unsettled questions, not from every question
 being a coin flip, and fine-tuning moved questions in and out of that band without shrinking
-it. In this comparison the prompted 7B had a smaller band (68 against 113); a single model pair
+it. In this comparison the prompted 7B had a smaller band (69 against 113); a single model pair
 cannot say whether its size is the cause.
 
 ### The smaller model, measured three ways
@@ -219,24 +222,24 @@ so the comparison is available without running anything new.
 
 | | capability (pass@10) | single attempt (pass@1) | reliability (pass^10) | gap |
 |---|---|---|---|---|
-| Prompted 7B (from the earlier project) | 49.8% | 42.9% | 36.1% | 13.7% |
+| Prompted 7B (from the earlier project) | 50.0% | 43.0% | 36.1% | 13.9% |
 | **Fine-tuned 3B** (F1) | 46.2% | 34.9% | 23.4% | 22.8% |
-| Difference (95% confidence) | −3.6 [−7.7, +0.6] | −8.0 [−11.6, −4.3] | −12.7 [−16.7, −8.5] | +9.1 [+4.4, +13.7] |
+| Difference (95% confidence) | −3.8 [−7.9, +0.4] | −8.1 [−11.6, −4.4] | −12.7 [−16.7, −8.5] | +8.9 [+4.2, +13.5] |
 
 **On pass@10 this study cannot separate them.** The interval includes zero, and it also allows
 a deficit of nearly eight points, so the reading is "not detected", not "equal" — the same
 reading this section applies to the gap.
 
 **On every stricter measure the 3B is behind.** Single-attempt accuracy — what a
-one-attempt-per-question evaluation reports — is **8.0 points lower**, and right-all-ten-times
+one-attempt-per-question evaluation reports — is **8.1 points lower**, and right-all-ten-times
 (pass^10) is **12.7 points lower**; neither interval comes near zero. Counted per question:
 **92 questions the 7B answered correctly all ten times, the fine-tuned 3B does not** — against
 29 going the other way. The 7B is right every time on 179 questions, the fine-tuned 3B on 116:
 **about a third fewer** dependable answers.
 
-So the deficit widens from 3.6 points on pass@10 to 8.0 on a single attempt to 12.7 on pass^10:
+So the deficit widens from 3.8 points on pass@10 to 8.1 on a single attempt to 12.7 on pass^10:
 the more a use case depends on repeatable answers, the larger the shortfall, and the more a
-pass@10 comparison understates it. **That widening, not the headline zero, is the most practical
+pass@10 comparison understates it. **That widening, not the gap result, is the most practical
 finding of this project.** (pass@1 comes from `results/summary-f1-vs-7b.json`, its interval from
 `results/failure-modes.json`, where it is the "correct" rate.)
 
@@ -247,20 +250,20 @@ finding of this project.** (pass@1 comes from `results/summary-f1-vs-7b.json`, i
 
 ### Which questions moved
 
-Averages hide churn, so here is the same result counted one question at a time. **190 of the 496
-questions changed how many of their ten attempts were right**: 116 got better, 74 got worse. Of
-those, 150 changed category (never / partly / always right).
+Averages hide churn, so here is the same result counted one question at a time. **191 of the 496
+questions changed how many of their ten attempts were right**: 116 got better, 75 got worse. Of
+those, 151 changed category (never / partly / always right).
 
 ![What changed, per question](docs/images/what-changed.svg)
 
 | | Questions |
 |---|---|
 | Right all ten times, both models | 67 |
-| Wrong all ten times, both models | 231 |
+| Wrong all ten times, both models | 230 |
 | Became right all ten times after training | 49 |
 | Stopped being right all ten times | 27 |
 | Became partly right (from never right) | 46 |
-| Fell to never right (from partly right) | 28 |
+| Fell to never right (from partly right) | 29 |
 | Partly right in both, number of right attempts changed | 40 |
 | Partly right in both, unchanged | 8 |
 
@@ -269,7 +272,7 @@ by `tests/test_published_numbers.py`. The **49 against 27** is where the headlin
 comes from. The 27 is the part worth dwelling on: training is not a pure addition, and some
 questions the untrained model had nailed every time, the trained model now sometimes gets wrong.
 
-And **231 questions — nearly half — neither model ever got right, in twenty attempts between
+And **230 questions — nearly half — neither model ever got right, in twenty attempts between
 them.** That is not flakiness; that is the ceiling of a 3-billion-number model on this
 benchmark. No amount of steadying would have moved those, which is worth remembering before
 reading any reliability number as a product guarantee.
@@ -354,7 +357,7 @@ the same way.
 **What sits next to this repo** (paths are relative to it):
 
 - `../nl2sql-reliability` — a clone of the
-  [measurement harness](https://github.com/MohanVishe/nl2sql-reliability) at commit `a0ea7fb`,
+  [measurement harness](https://github.com/MohanVishe/nl2sql-reliability) at commit `ed25506`,
   with its data fetched as its `docs/METHOD.md` ("Reproduce") describes. It supplies the
   Arcwise-Plat-SQL test set, the evaluation databases, and the earlier project's published
   attempts in `results/final/`.
@@ -427,8 +430,8 @@ trained adapter is not yet published (see Next, §8), so F1 cannot be re-evaluat
 retraining.
 
 Tests: `uv run python -m pytest`. They check the exact text sent to the model, the contamination
-rules, the data split, the estimators, and every count this README quotes against the result
-files. Three of them need the data above and skip without it; point `P1_DIR`, `MODEL_DIR`,
+rules, the data split, the estimators, and the headline numbers and counts this README quotes
+against the result files. Three of them need the data above and skip without it; point `P1_DIR`, `MODEL_DIR`,
 `TRAIN_JSONL` and `TRAIN_DBS` at it to run all of them.
 
 ---
@@ -464,7 +467,7 @@ files. Three of them need the data above and skip without it; point `P1_DIR`, `M
 
 - **One model, one size, one task.** 3 billion numbers, database questions. A bigger model or a
   different task may behave differently.
-- **One model pair in the 7B comparison.** The smaller flaky band of the 7B (68 against 113) is
+- **One model pair in the 7B comparison.** The smaller flaky band of the 7B (69 against 113) is
   one observation; this study cannot say whether model size is what causes it.
 - **One training recipe.** One set of training settings, one run, one seed. Different settings
   could move the result.

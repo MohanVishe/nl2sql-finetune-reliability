@@ -794,7 +794,7 @@ requires-dist = [
     { name = "bitsandbytes", marker = "extra == 'train'", specifier = ">=0.45" },
     { name = "datasets", marker = "extra == 'train'", specifier = ">=3.0" },
     { name = "jinja2", specifier = ">=3.1" },
-    { name = "nl2sql-reliability", git = "https://github.com/MohanVishe/nl2sql-reliability?rev=a0ea7fbff713860d2f1c44c039229b8849e5ca5d" },
+    { name = "nl2sql-reliability", git = "https://github.com/MohanVishe/nl2sql-reliability?rev=ed25506a0d63622baf6e7bbeebea0a221cf484e5" },
     { name = "peft", marker = "extra == 'train'", specifier = ">=0.15" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
@@ -809,7 +809,7 @@ provides-extras = ["train", "dev"]
 [[package]]
 name = "nl2sql-reliability"
 version = "0.1.0"
-source = { git = "https://github.com/MohanVishe/nl2sql-reliability?rev=a0ea7fbff713860d2f1c44c039229b8849e5ca5d#a0ea7fbff713860d2f1c44c039229b8849e5ca5d" }
+source = { git = "https://github.com/MohanVishe/nl2sql-reliability?rev=ed25506a0d63622baf6e7bbeebea0a221cf484e5#ed25506a0d63622baf6e7bbeebea0a221cf484e5" }
 
 [[package]]
 name = "numpy"

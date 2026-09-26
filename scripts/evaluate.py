@@ -29,7 +29,7 @@ from pathlib import Path
 
 from nl2sql_finetune.paths import portable
 
-P1_COMMIT = "a0ea7fbff713860d2f1c44c039229b8849e5ca5d"
+P1_COMMIT = "ed25506a0d63622baf6e7bbeebea0a221cf484e5"
 DEFAULT_P1 = Path("../nl2sql-reliability")
 HOST = "http://localhost:11434"
 REFERENCE = "qwen2.5-coder:3b"
