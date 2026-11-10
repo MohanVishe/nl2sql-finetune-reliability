@@ -7,7 +7,7 @@ second question as much as the first.
 
 **The answer: it helps both by about the same amount, and closes none of the gap.** Fine-tuning
 lifted capability by 4.2 points and reliability by 4.4 points, leaving the distance between them
-— the flakiness a product actually feels — where it was: 23.0% before, 22.8% after, a change of
+(the flakiness a product actually feels) where it was: 23.0% before, 22.8% after, a change of
 −0.2 points [−4.8, +4.4] that this study cannot tell from zero. Training made the model better.
 It did not make it detectably more dependable.
 
@@ -65,7 +65,7 @@ we did not find a published measurement of (see [related work](#10-related-work)
 - **pass^10** — "all ten answers are right". What a product needs. Call it **reliability**.
 - The distance between them is the **reliability gap**. A big gap means a flaky model.
 
-Both numbers come from the same ten answers. Nothing is measured twice; they are just counted
+Both numbers come from the same ten answers. Nothing is measured twice. They are just counted
 differently.
 
 ---
@@ -129,7 +129,7 @@ whole result in one table:
 one of ten" measure. Capability rose by **4.2 points** and reliability by **4.4**, and both
 intervals stay clear of zero, so neither rise is chance.
 
-**Training did not buy dependability.** The distance between the two — the flakiness — did not
+**Training did not buy dependability.** The distance between the two, the flakiness, did not
 detectably move. In the chart, both of F1's lines sit above F0's, and they stay about as far
 apart as before.
 
@@ -175,8 +175,8 @@ from one model to the other — but in net terms, for every point of crashes tha
 right answer, nearly three turned into a silent wrong one.
 
 That is what training on 5,851 examples bought at this scale. The pattern fits a model that
-learned the *form* of a valid query — the right table names, the right joins, the dataset's
-house style — faster than it learned to answer the question (one caveat on the answer key is in
+learned the *form* of a valid query (the right table names, the right joins, the dataset's
+house style) faster than it learned to answer the question (one caveat on the answer key is in
 §8). Judged on the benchmark, this is a clean 4-point win.
 Judged as a product change, it moved failures from a pile you can monitor into a pile you
 cannot. **A team watching its error-rate dashboard would have seen that dashboard improve by
@@ -197,17 +197,17 @@ Counting questions by how many of their ten attempts succeeded tells you which:
 | Prompted 7B | 248 | **69** | 179 |
 
 The unstable middle is **114 questions before fine-tuning and 113 after.** Fine-tuning churned
-the deck thoroughly — 151 of 496 questions changed category, and 191 changed how many of their
-ten attempts were right — and left the size of the middle band almost where it was. The 7B is
+the deck thoroughly (151 of 496 questions changed category, and 191 changed how many of their
+ten attempts were right) and left the size of the middle band almost where it was. The 7B is
 unstable on 69.
 
-That 114 → 113 is not a separate explanation of the gap result; it is the same fact. At k = 10
+That 114 → 113 is not a separate explanation of the gap result. It is the same fact. At k = 10
 the gap *is* the share of questions that are sometimes right (114 / 496 = 23.0%, then
 113 / 496 = 22.8%), so a band that barely moved and a gap that barely moved are one observation
 stated twice. What the histogram adds
 is shape: the gap comes from a minority band of unsettled questions, not from every question
 being a coin flip, and fine-tuning moved questions in and out of that band without shrinking
-it. In this comparison the prompted 7B had a smaller band (69 against 113); a single model pair
+it. In this comparison the prompted 7B had a smaller band (69 against 113). A single model pair
 cannot say whether its size is the cause.
 
 ### The smaller model, measured three ways
@@ -230,8 +230,8 @@ so the comparison is available without running anything new.
 a deficit of nearly eight points, so the reading is "not detected", not "equal" — the same
 reading this section applies to the gap.
 
-**On every stricter measure the 3B is behind.** Single-attempt accuracy — what a
-one-attempt-per-question evaluation reports — is **8.1 points lower**, and right-all-ten-times
+**On every stricter measure the 3B is behind.** Single-attempt accuracy (what a
+one-attempt-per-question evaluation reports) is **8.1 points lower**, and right-all-ten-times
 (pass^10) is **12.7 points lower**; neither interval comes near zero. Counted per question:
 **92 questions the 7B answered correctly all ten times, the fine-tuned 3B does not** — against
 29 going the other way. The 7B is right every time on 179 questions, the fine-tuned 3B on 116:
@@ -272,9 +272,9 @@ by `tests/test_published_numbers.py`. The **49 against 27** is where the headlin
 comes from. The 27 is the part worth dwelling on: training is not a pure addition, and some
 questions the untrained model had nailed every time, the trained model now sometimes gets wrong.
 
-And **230 questions — nearly half — neither model ever got right, in twenty attempts between
-them.** That is not flakiness; that is the ceiling of a 3-billion-number model on this
-benchmark. No amount of steadying would have moved those, which is worth remembering before
+And **230 questions, nearly half, neither model ever got right, in twenty attempts between
+them.** That is the ceiling of a 3-billion-number model on this
+benchmark, not flakiness. No amount of steadying would have moved those, which is worth remembering before
 reading any reliability number as a product guarantee.
 
 ---
@@ -303,8 +303,8 @@ that held-out validation loss**.
   printed digit, so the two numbers are measured the same way. The fraction of answer tokens
   predicted exactly rises from 93.1% to 95.6%.
 
-One visible change: the trained model writes queries in the dataset's house style — short
-aliases like `T1` and `T2`, one line, no trailing semicolon — where the untrained model writes
+One visible change: the trained model writes queries in the dataset's house style (short
+aliases like `T1` and `T2`, one line, no trailing semicolon) where the untrained model writes
 free-form SQL. It learned the *form* of the answers, which is exactly what training on
 examples does.
 
@@ -324,7 +324,7 @@ Every technical term used in this repository, in plain language.
 | **Token** | A chunk of text, roughly a short word. Models read and write in tokens, not letters. |
 | **Fine-tuning** | Further training of an existing model on your own examples, so it gets better at one specific job. |
 | **LoRA / QLoRA** | A cheap way to fine-tune. Instead of rewriting all 3 billion numbers, you train a small set of extra numbers (an **adapter**) and leave the rest frozen. QLoRA also squeezes the frozen model to 4 bits so it fits on a small card. This trained about 30 million numbers (29.9 million) instead of 3 billion, on an 8 GB gaming GPU. |
-| **Adapter** | The small file produced by LoRA training. Useless alone; it plugs into the original model. |
+| **Adapter** | The small file produced by LoRA training. Useless alone, it plugs into the original model. |
 | **Merging** | Folding the adapter's numbers permanently into the model, so the result is one ordinary model again. |
 | **Quantisation (4-bit, Q4_K_M)** | Storing each of the model's numbers with less precision so it takes less memory and runs faster — like saving a photo as a smaller JPEG. `Q4_K_M` is one specific recipe for doing it. |
 | **GGUF** | The file format that holds a quantised model, used by llama.cpp and Ollama. |
@@ -474,7 +474,7 @@ against the result files. Three of them need the data above and skip without it;
 - **One model, one size, one task.** 3 billion numbers, database questions. A bigger model or a
   different task may behave differently.
 - **One model pair in the 7B comparison.** The smaller flaky band of the 7B (69 against 113) is
-  one observation; this study cannot say whether model size is what causes it.
+  one observation. This study cannot say whether model size is what causes it.
 - **One training recipe.** One set of training settings, one run, one seed. Different settings
   could move the result.
 - **Trained on one answer key, scored on another.** The model learned from BIRD's original
@@ -500,8 +500,8 @@ against the result files. Three of them need the data above and skip without it;
   measured effect is the effect of the adapter as deployed. Next: evaluate one 16-bit merged
   checkpoint on a subset of questions to bound the difference.
 - **The kept model saw about half of one pass over the data.** Step 200 of 732 is roughly 0.55
-  of an epoch, and validation loss rose after it. This is a study of *light* fine-tuning — which
-  is what the validation loss selected — not of training to exhaustion.
+  of an epoch, and validation loss rose after it. This is a study of *light* fine-tuning (which
+  is what the validation loss selected), not of training to exhaustion.
 - **Limited power on the headline.** With 496 questions, the interval on the change in the gap
   is about ±4.5 points. A real improvement in dependability smaller than that would not have
   been detected, and this study would have reported the same "no detectable change". The finding
@@ -574,4 +574,4 @@ against the result files. Three of them need the data above and skip without it;
   ([arXiv:2607.25583](https://arxiv.org/abs/2607.25583)).
 
 We did not find a published measurement of how fine-tuning changes the gap between pass@k and
-pass^k; that is the question this study adds to the work above.
+pass^k. That is the question this study adds to the work above.
